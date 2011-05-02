@@ -529,17 +529,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			}
 			gproject.Project.References.Add (pref);
 		}
-		
-		Widget MonoDevelop.DesignerSupport.IOutlinedDocument.GetOutlineWidget ()
-		{
-			return GuiBuilderDocumentOutline.Instance;
-		}
-
-		void MonoDevelop.DesignerSupport.IOutlinedDocument.ReleaseOutlineWidget ()
-		{
-			//Do nothing. We keep the instance to avoid creation cost when switching documents.
-		}
-
+	
 		TargetEntry[] IToolboxConsumer.DragTargets {
 			get { return Stetic.DND.Targets; }
 		}
