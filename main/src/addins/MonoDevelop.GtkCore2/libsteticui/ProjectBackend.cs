@@ -1234,4 +1234,17 @@ namespace Stetic {
 	}
 	
 	public delegate void ProjectChangedEventHandler (object sender, ProjectChangedEventArgs args);
+	
+	public static class EncodingUtility
+	{
+		static System.Text.UTF8Encoding utf8NoBom;
+
+		/// This is so we can write XML files on .NET in a compatible way with Mono,
+		/// since .NET's XmlWriter writes the BOM but Mono's does not.
+		public static System.Text.UTF8Encoding UTF8NoBom {
+			get {
+				return utf8NoBom ?? (utf8NoBom = new System.Text.UTF8Encoding (false));
+			}
+		}
+	}
 }
