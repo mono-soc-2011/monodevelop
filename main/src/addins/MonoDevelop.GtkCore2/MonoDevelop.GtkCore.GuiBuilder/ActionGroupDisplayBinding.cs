@@ -41,15 +41,19 @@ using MonoDevelop.Ide;
 
 namespace MonoDevelop.GtkCore.GuiBuilder
 {
-	public class ActionGroupDisplayBinding : DisplayBinding
+	public class ActionGroupDisplayBinding : IViewDisplayBinding
 	{
 		bool excludeThis = false;
 		
-		public override string Name {
-			get { return "Action Group Editor"; }
+		public string Name {
+			get { return MonoDevelop.Core.GettextCatalog.GetString ("Action Group Editor"); }
 		}
 		
-		public override bool CanCreateContentForUri (string fileName)
+		public bool CanUseAsDefault {
+			get { return true; }
+		}
+		
+		public bool CanHandle (FilePath fileName, string mimeType, Project ownerProject)
 		{
 			Project project = IdeApp.Workspace.GetProjectContainingFile (fileName);
 			GtkDesignInfo info = GtkDesignInfo.FromProject ((DotNetProject) project);
@@ -57,7 +61,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			if (excludeThis)
 				return false;
 			
-			if (fileName.Contains (info.BuildFileExtension))
+			if (fileName.IsNullOrEmpty)
 				return false;
 			
 			if (!IdeApp.Workspace.IsOpen)
@@ -66,22 +70,20 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			if (GetActionGroup (fileName) == null)
 				return false;
 			
-			
 			excludeThis = true;
-			var db = DisplayBindingService.GetDefaultBindingForUri (fileName);
+			var db = DisplayBindingService.GetDefaultViewBinding (fileName, mimeType, ownerProject);
 			excludeThis = false;
 			return db != null;
 		}
 		
-		public override IViewContent CreateContentForUri (string fileName)
+		public IViewContent CreateContent (FilePath fileName, string mimeType, Project ownerProject)
 		{
 			excludeThis = true;
-			var db = DisplayBindingService.GetDefaultBindingForUri (fileName);
+			var db = DisplayBindingService.GetDefaultViewBinding (fileName, mimeType, ownerProject);
+			GtkDesignInfo info = GtkDesignInfo.FromProject ((DotNetProject) ownerProject);
 			
-			Project project = IdeApp.Workspace.GetProjectContainingFile (fileName);
-			GtkDesignInfo info = GtkDesignInfo.FromProject ((DotNetProject) project);
-			
-			ActionGroupView view = new ActionGroupView (db.CreateContentForUri (fileName), GetActionGroup (fileName), info.GuiBuilderProject);
+			var content = db.CreateContent (fileName, mimeType, ownerProject);
+			ActionGroupView view = new ActionGroupView (content, GetActionGroup (fileName), info.GuiBuilderProject);
 			excludeThis = false;
 			return view;
 		}
@@ -178,13 +180,8 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			project.AddFile (cls.CompilationUnit.FileName, BuildAction.Compile);
 			IdeApp.ProjectOperations.Save (project);
 			
-#if TRUNK
 			// Make sure the database is up-to-date
 			ProjectDomService.Parse (project, cls.CompilationUnit.FileName);
-#else 
-			ProjectDomService.Parse (project, cls.CompilationUnit.FileName, null);
-			
-#endif
 			return cls;
 		}
 		
