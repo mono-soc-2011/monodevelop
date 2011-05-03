@@ -542,7 +542,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			//TODO : Wait for a fix for Mono.TextEditor.Document in the trunk
 			//content = StripHeaderAndBlankLines (content, provider);
 			string mt = DesktopService.GetMimeTypeForUri (file);
-			Formatter formatter = TextFileService.GetFormatter (mt);
+			var formatter = MonoDevelop.Ide.CodeFormatting.CodeFormatterService.GetFormatter (mt);
 			if (formatter != null)
 				content = formatter.FormatText (PolicyService.InvariantPolicies, content);
 			return content;
