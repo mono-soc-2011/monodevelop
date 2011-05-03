@@ -392,40 +392,44 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 		
 		void OnFileAdded (object sender, ProjectFileEventArgs args)
 		{	
-			FilePath path = args.ProjectFile.FilePath;
-			
-			if (path.Extension == ".gtkx") { 
-					AddNewComponent (path);
+			foreach (ProjectFileEventInfo e in args) {
+				FilePath path = e.ProjectFile.FilePath;
+				
+				if (path.Extension == ".gtkx") { 
+						AddNewComponent (path);
+				}
 			}
 		}
 
 		void OnFileRemoved (object sender, ProjectFileEventArgs args)
 		{
-			ArrayList toDelete = new ArrayList ();
-			ArrayList toDeleteGroups = new ArrayList ();
-
-			ParsedDocument doc = ProjectDomService.GetParsedDocument (ProjectDomService.GetProjectDom (args.Project), args.ProjectFile.Name);
-			if (doc == null || doc.CompilationUnit == null)
-				return;
-
-			foreach (IType t in doc.CompilationUnit.Types) {
-				GuiBuilderWindow win = GetWindowForClass (t.FullName);
-				if (win != null) {
-					toDelete.Add (win);
-					continue;
-				}
-				
-				Stetic.ActionGroupInfo group = GetActionGroup (t.FullName);
-				if (group != null) {
-					toDeleteGroups.Add (group);
-				}
-			}
+			foreach (ProjectFileEventInfo e in args) {
+				ArrayList toDelete = new ArrayList ();
+				ArrayList toDeleteGroups = new ArrayList ();
 	
-			foreach (GuiBuilderWindow win in toDelete)
-				Remove (win);
-			
-			foreach (Stetic.ActionGroupInfo group in toDeleteGroups)
-				RemoveActionGroup (group);
+				ParsedDocument doc = ProjectDomService.GetParsedDocument (ProjectDomService.GetProjectDom (e.Project), e.ProjectFile.Name);
+				if (doc == null || doc.CompilationUnit == null)
+					return;
+	
+				foreach (IType t in doc.CompilationUnit.Types) {
+					GuiBuilderWindow win = GetWindowForClass (t.FullName);
+					if (win != null) {
+						toDelete.Add (win);
+						continue;
+					}
+					
+					Stetic.ActionGroupInfo group = GetActionGroup (t.FullName);
+					if (group != null) {
+						toDeleteGroups.Add (group);
+					}
+				}
+		
+				foreach (GuiBuilderWindow win in toDelete)
+					Remove (win);
+				
+				foreach (Stetic.ActionGroupInfo group in toDeleteGroups)
+					RemoveActionGroup (group);
+			}
 		}
 
 		void OnGroupsChanged (object s, EventArgs a)
