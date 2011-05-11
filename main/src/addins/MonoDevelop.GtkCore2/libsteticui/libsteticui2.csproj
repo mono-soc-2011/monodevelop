@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8951D80F-B2D6-4B4E-B119-28FFE3B7B1C0}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AssemblyName>libsteticui2</AssemblyName>
     <RootNamespace>libsteticui</RootNamespace>
   </PropertyGroup>
@@ -37,7 +37,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Posix" />
     <Reference Include="System" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Xml" />
@@ -60,22 +59,14 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="Mono.Cecil, Version=0.6.9.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <Package>monodevelop</Package>
-    </Reference>
-    <Reference Include="MonoDevelop.Core, Version=2.4.0.0, Culture=neutral">
-      <Package>monodevelop</Package>
-    </Reference>
-    <Reference Include="MonoDevelop.Ide, Version=2.4.0.0, Culture=neutral">
-      <Package>monodevelop</Package>
-    </Reference>
     <Reference Include="NRefactory, Version=2.1.1.0, Culture=neutral, PublicKeyToken=efe927acf176eea2">
       <Package>monodevelop</Package>
     </Reference>
+    <Reference Include="Mono.Posix" />
     <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral">
       <Package>monodevelop</Package>
     </Reference>
-    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=9307d64546e0580d">
+    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5e9ce85b0923c84f">
       <Package>monodevelop</Package>
     </Reference>
   </ItemGroup>
@@ -83,6 +74,10 @@
     <ProjectReference Include="..\libstetic\libstetic2.csproj">
       <Project>{90CBA7FD-CB46-4711-97BB-2420DC01F016}</Project>
       <Name>libstetic2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\contrib\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{3EC06433-F168-4C5B-A885-99CE4AB617E1}</Project>
+      <Name>Mono.Cecil</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
