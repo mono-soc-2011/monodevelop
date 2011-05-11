@@ -24,6 +24,7 @@ namespace Stetic
 						//designer file for widget could be changed beyond stetic process 
 						//and we nead update wrapper before code generation
 						//during reloading wrappered widget w could be changed;
+						Console.WriteLine ("GenerateProjectGuiCode {0}", topLevelName);
 						Gtk.Widget currentw = w;
 						if (gp.ReloadTopLevel (topLevelName)) {
 							currentw = gp.GetWidget (topLevelName);
