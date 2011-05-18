@@ -124,7 +124,7 @@ namespace Stetic
 			return wrapperClassDescriptor.CreateWrapper ();
 		}
 		
-		protected override Stetic.ItemDescriptor CreateItemDescriptor (XmlElement elem, Stetic.ItemGroup group)
+		protected override internal Stetic.ItemDescriptor CreateItemDescriptor (XmlElement elem, Stetic.ItemGroup group)
 		{
 			string mname = elem.GetAttribute ("name");
 			if (elem.Name == "property") {

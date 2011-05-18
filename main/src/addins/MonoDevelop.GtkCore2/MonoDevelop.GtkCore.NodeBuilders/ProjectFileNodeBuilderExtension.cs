@@ -54,7 +54,7 @@ namespace MonoDevelop.GtkCore.NodeBuilders
 				
 				switch (type) {
 				case GtkComponentType.Dialog : 
-					icon = ImageService.GetPixbuf ("md-gtkcore-dialog", Gtk.IconSize.Menu);
+					icon = ImageService.GetPixbuf ("md-gtkcore-window", Gtk.IconSize.Menu);
 					break;
 				case GtkComponentType.Widget :
 					icon = ImageService.GetPixbuf ("md-gtkcore-widget", Gtk.IconSize.Menu);

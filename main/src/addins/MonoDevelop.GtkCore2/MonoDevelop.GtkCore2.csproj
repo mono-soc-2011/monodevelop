@@ -22,6 +22,7 @@
       <Execution clr-version="Net_2_0" />
     </Execution>
     <DefineConstants>TRUNK</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -33,6 +34,7 @@
       <Execution clr-version="Net_2_0" />
     </Execution>
     <DefineConstants>TRUNK</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -67,16 +69,10 @@
       <Package>monodevelop</Package>
     </Reference>
     <Reference Include="Mono.Addins, Version=0.6.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="Mono.Cairo" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="libsteticui\libsteticui2.csproj">
-      <Project>{8951D80F-B2D6-4B4E-B119-28FFE3B7B1C0}</Project>
-      <Name>libsteticui2</Name>
-    </ProjectReference>
-    <ProjectReference Include="libstetic\libstetic2.csproj">
-      <Project>{90CBA7FD-CB46-4711-97BB-2420DC01F016}</Project>
-      <Name>libstetic2</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\contrib\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{3EC06433-F168-4C5B-A885-99CE4AB617E1}</Project>
       <Name>Mono.Cecil</Name>
@@ -101,8 +97,10 @@
   <ItemGroup>
     <None Include="ChangeLog" />
     <None Include="Makefile.am" />
-    <None Include="icons\window.png" />
-    <None Include="icons\dialog.png" />
+    <None Include="Stetic\missing.png" />
+    <None Include="MonoDevelop.GtkCore2.dll.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="templates\Dialog.xft.xml">
@@ -156,6 +154,90 @@
     <EmbeddedResource Include="MonoDevelop.GtkCore2.addin.xml">
       <LogicalName>MonoDevelop.GtkCore.addin.xml</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\objects.xml">
+      <LogicalName>objects.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\accellabel.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\actiongroup.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\add-check-label.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\add-menu.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\alignment.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\arrow.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\box-expand.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\box-fill.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\button.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\calendar.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-expand-h.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-expand-v.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-fill-h.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-fill-v.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\checkbutton.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorbutton.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorselection.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorselectiondialog.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\combo.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\comboentry.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\custom.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\dec-border.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\dialog.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\drawingarea.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\entry.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\eventbox.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\expander.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fileselection.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fixed.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontbutton.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontselection.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontselectiondialog.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\frame.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\globe-not.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\globe.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\handlebox.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hbox.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hbuttonbox.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hpaned.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hscale.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hscrollbar.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hseparator.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\iconview.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\image.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\inc-border.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\label.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\menu.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\menubar.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\messagedialog.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\missing.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\notebook.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\optionmenu.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\progressbar.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\radiobutton.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\remove-check-label.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\remove-menu.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\scrolledwindow.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\spinbutton.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\statusbar.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\table.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\textview.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\togglebutton.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\toolbar.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\treeview.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vbox.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vbuttonbox.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\viewport.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vpaned.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vscale.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vscrollbar.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vseparator.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\widget.png" />
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\window.png" />
+    <EmbeddedResource Include="Stetic\stetic.glade" />
+    <EmbeddedResource Include="Stetic\action.png" />
+    <EmbeddedResource Include="icons\window.png">
+      <LogicalName>window.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="icons\dialog.png">
+      <LogicalName>dialog.png</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MonoDevelop.GtkCore.GuiBuilder\ClassUtils.cs" />
@@ -200,6 +282,231 @@
     <Compile Include="MonoDevelop.GtkCore.NodeBuilders\GuiProjectFolderNodeBuilder.cs" />
     <Compile Include="gtk-gui\MonoDevelop.GtkCore.Dialogs.ProjectConversionDialog.cs" />
     <Compile Include="MonoDevelop.GtkCore.Commands\GtkCommands.cs" />
+    <Compile Include="Stetic\ClassDescriptor.cs" />
+    <Compile Include="Stetic\Clipboard.cs" />
+    <Compile Include="Stetic\CommandDescriptor.cs" />
+    <Compile Include="Stetic\CustomWidget.cs" />
+    <Compile Include="Stetic\DND.cs" />
+    <Compile Include="Stetic\EnumDescriptor.cs" />
+    <Compile Include="Stetic\ErrorWidget.cs" />
+    <Compile Include="Stetic\GeneratorContext.cs" />
+    <Compile Include="Stetic\GladeException.cs" />
+    <Compile Include="Stetic\GladeUtils.cs" />
+    <Compile Include="Stetic\IDesignArea.cs" />
+    <Compile Include="Stetic\IEditableObject.cs" />
+    <Compile Include="Stetic\IProject.cs" />
+    <Compile Include="Stetic\IPropertyEditor.cs" />
+    <Compile Include="Stetic\IRadioGroupManager.cs" />
+    <Compile Include="Stetic\IResourceProvider.cs" />
+    <Compile Include="Stetic\ImageInfo.cs" />
+    <Compile Include="Stetic\ItemDescriptor.cs" />
+    <Compile Include="Stetic\ItemGroup.cs" />
+    <Compile Include="Stetic\ItemGroupCollection.cs" />
+    <Compile Include="Stetic\NoGuiDispatchAttribute.cs" />
+    <Compile Include="Stetic\ObjectReader.cs" />
+    <Compile Include="Stetic\ObjectWrapper.cs" />
+    <Compile Include="Stetic\ObjectWrapperEventHandler.cs" />
+    <Compile Include="Stetic\ObjectWriter.cs" />
+    <Compile Include="Stetic\ParamSpec.cs" />
+    <Compile Include="Stetic\Placeholder.cs" />
+    <Compile Include="Stetic\ProjectIconFactory.cs" />
+    <Compile Include="Stetic\PropertyDescriptor.cs" />
+    <Compile Include="Stetic\PropertyEditorAttribute.cs" />
+    <Compile Include="Stetic\PropertyEditorCell.cs" />
+    <Compile Include="Stetic\RadioGroupManager.cs" />
+    <Compile Include="Stetic\Registry.cs" />
+    <Compile Include="Stetic\Set.cs" />
+    <Compile Include="Stetic\SignalDescriptor.cs" />
+    <Compile Include="Stetic\TopLevelDialog.cs" />
+    <Compile Include="Stetic\TopLevelWindow.cs" />
+    <Compile Include="Stetic\TranslatableAttribute.cs" />
+    <Compile Include="Stetic\TypedClassDescriptor.cs" />
+    <Compile Include="Stetic\TypedPropertyDescriptor.cs" />
+    <Compile Include="Stetic\TypedSignalDescriptor.cs" />
+    <Compile Include="Stetic\WidgetLibrary.cs" />
+    <Compile Include="Stetic\WidgetUtils.cs" />
+    <Compile Include="Stetic\Editor\Accelerator.cs" />
+    <Compile Include="Stetic\Editor\ActionGroupEditor.cs" />
+    <Compile Include="Stetic\Editor\ActionItem.cs" />
+    <Compile Include="Stetic\Editor\ActionMenu.cs" />
+    <Compile Include="Stetic\Editor\ActionMenuBar.cs" />
+    <Compile Include="Stetic\Editor\ActionMenuItem.cs" />
+    <Compile Include="Stetic\Editor\ActionToolItem.cs" />
+    <Compile Include="Stetic\Editor\ActionToolbar.cs" />
+    <Compile Include="Stetic\Editor\Boolean.cs" />
+    <Compile Include="Stetic\Editor\CellRendererComboBox.cs" />
+    <Compile Include="Stetic\Editor\Char.cs" />
+    <Compile Include="Stetic\Editor\Color.cs" />
+    <Compile Include="Stetic\Editor\DateTimeEditor.cs" />
+    <Compile Include="Stetic\Editor\EditIconDialog.cs" />
+    <Compile Include="Stetic\Editor\EditIconFactoryDialog.cs" />
+    <Compile Include="Stetic\Editor\Enumeration.cs" />
+    <Compile Include="Stetic\Editor\Flags.cs" />
+    <Compile Include="Stetic\Editor\FlagsSelectorDialog.cs" />
+    <Compile Include="Stetic\Editor\FloatRange.cs" />
+    <Compile Include="Stetic\Editor\GroupPicker.cs" />
+    <Compile Include="Stetic\Editor\IconList.cs" />
+    <Compile Include="Stetic\Editor\IconSelectorItem.cs" />
+    <Compile Include="Stetic\Editor\IconSelectorMenu.cs" />
+    <Compile Include="Stetic\Editor\IconSelectorMenuItem.cs" />
+    <Compile Include="Stetic\Editor\Identifier.cs" />
+    <Compile Include="Stetic\Editor\Image.cs" />
+    <Compile Include="Stetic\Editor\ImageFile.cs" />
+    <Compile Include="Stetic\Editor\ImageSelector.cs" />
+    <Compile Include="Stetic\Editor\IntRange.cs" />
+    <Compile Include="Stetic\Editor\NonContainerWarningDialog.cs" />
+    <Compile Include="Stetic\Editor\OptIntRange.cs" />
+    <Compile Include="Stetic\Editor\ProjectIconList.cs" />
+    <Compile Include="Stetic\Editor\ProjectIconSelectorItem.cs" />
+    <Compile Include="Stetic\Editor\ResponseId.cs" />
+    <Compile Include="Stetic\Editor\SelectIconDialog.cs" />
+    <Compile Include="Stetic\Editor\SelectImageDialog.cs" />
+    <Compile Include="Stetic\Editor\StockIconList.cs" />
+    <Compile Include="Stetic\Editor\StockIconSelectorItem.cs" />
+    <Compile Include="Stetic\Editor\StockItem.cs" />
+    <Compile Include="Stetic\Editor\String.cs" />
+    <Compile Include="Stetic\Editor\StringArray.cs" />
+    <Compile Include="Stetic\Editor\Text.cs" />
+    <Compile Include="Stetic\Editor\TextBox.cs" />
+    <Compile Include="Stetic\Editor\TextEditor.cs" />
+    <Compile Include="Stetic\Editor\TextEditorDialog.cs" />
+    <Compile Include="Stetic\Editor\ThemedIcon.cs" />
+    <Compile Include="Stetic\Editor\ThemedIconList.cs" />
+    <Compile Include="Stetic\Editor\TimeSpanEditor.cs" />
+    <Compile Include="Stetic\Editor\Translatable.cs" />
+    <Compile Include="Stetic\Editor\TreeViewCellContainer.cs" />
+    <Compile Include="Stetic\Editor\WidgetSelector.cs" />
+    <Compile Include="Stetic\Undo\ActionDiffAdaptor.cs" />
+    <Compile Include="Stetic\Undo\DiffGenerator.cs" />
+    <Compile Include="Stetic\Undo\IDiffAdaptor.cs" />
+    <Compile Include="Stetic\Undo\UndoManager.cs" />
+    <Compile Include="Stetic\Undo\XmlDiffAdaptor.cs" />
+    <Compile Include="Stetic\Wrapper\AboutDialog.cs" />
+    <Compile Include="Stetic\Wrapper\Action.cs" />
+    <Compile Include="Stetic\Wrapper\ActionGroup.cs" />
+    <Compile Include="Stetic\Wrapper\ActionToolbarWrapper.cs" />
+    <Compile Include="Stetic\Wrapper\ActionTree.cs" />
+    <Compile Include="Stetic\Wrapper\Bin.cs" />
+    <Compile Include="Stetic\Wrapper\Box.cs" />
+    <Compile Include="Stetic\Wrapper\Button.cs" />
+    <Compile Include="Stetic\Wrapper\ButtonBox.cs" />
+    <Compile Include="Stetic\Wrapper\CheckButton.cs" />
+    <Compile Include="Stetic\Wrapper\ColorButton.cs" />
+    <Compile Include="Stetic\Wrapper\ComboBox.cs" />
+    <Compile Include="Stetic\Wrapper\ComboBoxEntry.cs" />
+    <Compile Include="Stetic\Wrapper\Container.cs" />
+    <Compile Include="Stetic\Wrapper\Custom.cs" />
+    <Compile Include="Stetic\Wrapper\Dialog.cs" />
+    <Compile Include="Stetic\Wrapper\Entry.cs" />
+    <Compile Include="Stetic\Wrapper\Expander.cs" />
+    <Compile Include="Stetic\Wrapper\Fixed.cs" />
+    <Compile Include="Stetic\Wrapper\FontButton.cs" />
+    <Compile Include="Stetic\Wrapper\FontSelectionDialog.cs" />
+    <Compile Include="Stetic\Wrapper\Frame.cs" />
+    <Compile Include="Stetic\Wrapper\HScale.cs" />
+    <Compile Include="Stetic\Wrapper\HScrollbar.cs" />
+    <Compile Include="Stetic\Wrapper\IconView.cs" />
+    <Compile Include="Stetic\Wrapper\Image.cs" />
+    <Compile Include="Stetic\Wrapper\ImageMenuItem.cs" />
+    <Compile Include="Stetic\Wrapper\Label.cs" />
+    <Compile Include="Stetic\Wrapper\MenuBar.cs" />
+    <Compile Include="Stetic\Wrapper\MenuItem.cs" />
+    <Compile Include="Stetic\Wrapper\MessageDialog.cs" />
+    <Compile Include="Stetic\Wrapper\Misc.cs" />
+    <Compile Include="Stetic\Wrapper\Notebook.cs" />
+    <Compile Include="Stetic\Wrapper\Object.cs" />
+    <Compile Include="Stetic\Wrapper\OptionMenu.cs" />
+    <Compile Include="Stetic\Wrapper\Paned.cs" />
+    <Compile Include="Stetic\Wrapper\RadioActionGroupManager.cs" />
+    <Compile Include="Stetic\Wrapper\RadioButton.cs" />
+    <Compile Include="Stetic\Wrapper\RadioMenuItem.cs" />
+    <Compile Include="Stetic\Wrapper\RadioToolButton.cs" />
+    <Compile Include="Stetic\Wrapper\Range.cs" />
+    <Compile Include="Stetic\Wrapper\Scale.cs" />
+    <Compile Include="Stetic\Wrapper\ScrolledWindow.cs" />
+    <Compile Include="Stetic\Wrapper\Signal.cs" />
+    <Compile Include="Stetic\Wrapper\SignalChangedEventHandler.cs" />
+    <Compile Include="Stetic\Wrapper\SignalCollection.cs" />
+    <Compile Include="Stetic\Wrapper\SignalEventHandler.cs" />
+    <Compile Include="Stetic\Wrapper\SpinButton.cs" />
+    <Compile Include="Stetic\Wrapper\Table.cs" />
+    <Compile Include="Stetic\Wrapper\TextView.cs" />
+    <Compile Include="Stetic\Wrapper\ToggleToolButton.cs" />
+    <Compile Include="Stetic\Wrapper\Toolbar.cs" />
+    <Compile Include="Stetic\Wrapper\ToolButton.cs" />
+    <Compile Include="Stetic\Wrapper\TreeView.cs" />
+    <Compile Include="Stetic\Wrapper\Viewport.cs" />
+    <Compile Include="Stetic\Wrapper\VScale.cs" />
+    <Compile Include="Stetic\Wrapper\VScrollbar.cs" />
+    <Compile Include="Stetic\Wrapper\Widget.cs" />
+    <Compile Include="Stetic\Wrapper\WidgetEventHandler.cs" />
+    <Compile Include="Stetic\Wrapper\WidgetNameChangedHandler.cs" />
+    <Compile Include="Stetic\Wrapper\Window.cs" />
+    <Compile Include="Stetic\ActionComponent.cs" />
+    <Compile Include="Stetic\ActionGroupComponent.cs" />
+    <Compile Include="Stetic\ActionGroupDesigner.cs" />
+    <Compile Include="Stetic\ActionGroupDesignerBackend.cs" />
+    <Compile Include="Stetic\ActionGroupEditSession.cs" />
+    <Compile Include="Stetic\ActionGroupToolbar.cs" />
+    <Compile Include="Stetic\Application.cs" />
+    <Compile Include="Stetic\ApplicationBackend.cs" />
+    <Compile Include="Stetic\ApplicationBackendController.cs" />
+    <Compile Include="Stetic\AssemblyResolver.cs" />
+    <Compile Include="Stetic\AssemblyWidgetLibrary.cs" />
+    <Compile Include="Stetic\CecilClassDescriptor.cs" />
+    <Compile Include="Stetic\CecilPropertyDescriptor.cs" />
+    <Compile Include="Stetic\CecilSignalDescriptor.cs" />
+    <Compile Include="Stetic\CecilWidgetLibrary.cs" />
+    <Compile Include="Stetic\CodeGenerationResult.cs" />
+    <Compile Include="Stetic\CodeGenerator.cs" />
+    <Compile Include="Stetic\CodeGeneratorPartialClass.cs" />
+    <Compile Include="Stetic\Component.cs" />
+    <Compile Include="Stetic\ComponentEventHandler.cs" />
+    <Compile Include="Stetic\ComponentSignalEventHandler.cs" />
+    <Compile Include="Stetic\ComponentType.cs" />
+    <Compile Include="Stetic\ContainerUndoRedoManager.cs" />
+    <Compile Include="Stetic\ContextMenu.cs" />
+    <Compile Include="Stetic\Designer.cs" />
+    <Compile Include="Stetic\Glade.cs" />
+    <Compile Include="Stetic\Grid.cs" />
+    <Compile Include="Stetic\GuiDispatchServerSink.cs" />
+    <Compile Include="Stetic\GuiDispatchServerSinkProvider.cs" />
+    <Compile Include="Stetic\IProjectDesignInfo.cs" />
+    <Compile Include="Stetic\LibraryCache.cs" />
+    <Compile Include="Stetic\Palette.cs" />
+    <Compile Include="Stetic\PaletteBackend.cs" />
+    <Compile Include="Stetic\PluggableWidget.cs" />
+    <Compile Include="Stetic\Project.cs" />
+    <Compile Include="Stetic\ProjectBackend.cs" />
+    <Compile Include="Stetic\ProjectViewBackend.cs" />
+    <Compile Include="Stetic\PropertyEditor.cs" />
+    <Compile Include="Stetic\PropertyGrid.cs" />
+    <Compile Include="Stetic\PropertyTree.cs" />
+    <Compile Include="Stetic\Shadow.cs" />
+    <Compile Include="Stetic\SignalsEditor.cs" />
+    <Compile Include="Stetic\SignalsEditorBackend.cs" />
+    <Compile Include="Stetic\UndoQueue.cs" />
+    <Compile Include="Stetic\UserInterface.cs" />
+    <Compile Include="Stetic\WidgetActionBar.cs" />
+    <Compile Include="Stetic\WidgetComponent.cs" />
+    <Compile Include="Stetic\WidgetDesigner.cs" />
+    <Compile Include="Stetic\WidgetDesignerBackend.cs" />
+    <Compile Include="Stetic\WidgetEditSession.cs" />
+    <Compile Include="Stetic\WidgetFactory.cs" />
+    <Compile Include="Stetic\WidgetInfoEventHandler.cs" />
+    <Compile Include="Stetic\WidgetPropertyTree.cs" />
+    <Compile Include="Stetic\WidgetPropertyTreeBackend.cs" />
+    <Compile Include="Stetic\WidgetTree.cs" />
+    <Compile Include="Stetic\WidgetTreeCombo.cs" />
+    <Compile Include="Stetic\Metacity\ButtonFunction.cs" />
+    <Compile Include="Stetic\Metacity\ButtonLayout.cs" />
+    <Compile Include="Stetic\Metacity\FrameFlags.cs" />
+    <Compile Include="Stetic\Metacity\FrameType.cs" />
+    <Compile Include="Stetic\Metacity\ObjectManager.cs" />
+    <Compile Include="Stetic\Metacity\Preview.cs" />
+    <Compile Include="Stetic\Metacity\Theme.cs" />
+    <Compile Include="Stetic\Windows\Preview.cs" />
+    <Compile Include="Stetic\Windows\WindowsTheme.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Mono.Addins.targets" />
@@ -218,4 +525,9 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Stetic\Wrapper\" />
+    <Folder Include="Stetic\Metacity\" />
+    <Folder Include="Stetic\Windows\" />
+  </ItemGroup>
 </Project>

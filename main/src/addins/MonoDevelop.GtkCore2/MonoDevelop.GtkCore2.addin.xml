@@ -6,14 +6,11 @@
        url       = ""
        description = "Experimental GTK# visual designer developed during GSOC 2010 as a fork of stetic"
 	   category    = "IDE extensions"
-       version   = "2.6.0.5">
+       version   = "2.5.91">
 
 	<Runtime>
-		<Import assembly="libstetic2.dll"/>
-		<Import file="libstetic2.dll.config"/>
-		<Import assembly="libsteticui2.dll"/>
-		<Import file="libsteticui2.dll.config"/>
 		<Import assembly="MonoDevelop.GtkCore2.dll"/>
+		<Import file="MonoDevelop.GtkCore2.dll.config"/>
 	</Runtime>
 
 	<Dependencies>

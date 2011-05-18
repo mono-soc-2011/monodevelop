@@ -3,80 +3,11 @@ ASSEMBLY = $(ADDIN_BUILD)/libsteticui.dll
 assemblydir = $(MD_ADDIN_DIR)/MonoDevelop.GtkCore
 assembly_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb $(build_dll_config)
 
-FILES =  \
-	ActionComponent.cs \
-	ActionGroupComponent.cs \
-	ActionGroupDesigner.cs \
-	ActionGroupDesignerBackend.cs \
-	ActionGroupEditSession.cs \
-	ActionGroupToolbar.cs \
-	Application.cs \
-	ApplicationBackend.cs \
-	ApplicationBackendController.cs \
-	AssemblyResolver.cs \
-	AssemblyWidgetLibrary.cs \
-	CecilClassDescriptor.cs \
-	CecilPropertyDescriptor.cs \
-	CecilSignalDescriptor.cs \
-	CecilWidgetLibrary.cs \
-	CodeGenerationResult.cs \
-	CodeGenerator.cs \
-	CodeGeneratorPartialClass.cs \
-	Component.cs \
-	ComponentEventHandler.cs \
-	ComponentSignalEventHandler.cs \
-	ComponentType.cs \
-	ContainerUndoRedoManager.cs \
-	ContextMenu.cs \
-	Designer.cs \
-	Glade.cs \
-	Grid.cs \
-	GuiDispatchServerSink.cs \
-	GuiDispatchServerSinkProvider.cs \
-	IProjectDesignInfo.cs \
-	LibraryCache.cs \
-	Metacity/ButtonFunction.cs \
-	Metacity/ButtonLayout.cs \
-	Metacity/FrameFlags.cs \
-	Metacity/FrameType.cs \
-	Metacity/ObjectManager.cs \
-	Metacity/Preview.cs \
-	Metacity/Theme.cs \
-	Palette.cs \
-	PaletteBackend.cs \
-	PluggableWidget.cs \
-	Project.cs \
-	ProjectBackend.cs \
-	ProjectViewBackend.cs \
-	PropertyEditor.cs \
-	PropertyGrid.cs \
-	PropertyTree.cs \
-	Shadow.cs \
-	SignalsEditor.cs \
-	SignalsEditorBackend.cs \
-	UndoQueue.cs \
-	UserInterface.cs \
-	WidgetActionBar.cs \
-	WidgetComponent.cs \
-	WidgetDesigner.cs \
-	WidgetDesignerBackend.cs \
-	WidgetEditSession.cs \
-	WidgetFactory.cs \
-	WidgetInfoEventHandler.cs \
-	WidgetPropertyTree.cs \
-	WidgetPropertyTreeBackend.cs \
-	WidgetTree.cs \
-	WidgetTreeCombo.cs \
-	Windows/Preview.cs \
-	Windows/WindowsTheme.cs
+FILES =
 
-RES =  \
-	action.png \
-	missing.png
+RES =
 
-DEPS =  \
-	../../../../build/AddIns/MonoDevelop.GtkCore2/libstetic2.dll \
-	../../../../build/bin/Mono.Cecil.dll
+DEPS = ../../../../build/bin/Mono.Cecil.dll
 
 REFS =  \
 	$(GLADE_SHARP_LIBS) \
