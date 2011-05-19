@@ -7,15 +7,17 @@ DEPS =  \
 	$(top_builddir)/build/AddIns/MonoDevelop.Deployment/MonoDevelop.Deployment.dll \
 	$(top_builddir)/build/AddIns/MonoDevelop.DesignerSupport/MonoDevelop.DesignerSupport.dll \
 	$(top_builddir)/build/bin/Mono.Cecil.dll \
+	$(top_builddir)/build/bin/Mono.Debugging.dll \
+	$(top_builddir)/build/bin/Mono.TextEditor.dll \
 	$(top_builddir)/build/bin/MonoDevelop.Core.dll \
-	$(top_builddir)/build/bin/MonoDevelop.Ide.dll
+	$(top_builddir)/build/bin/MonoDevelop.Ide.dll \
+	$(top_builddir)/build/bin/NRefactory.dll
 
 REFS =  \
 	$(GLADE_SHARP_LIBS) \
 	$(GLIB_SHARP_LIBS) \
 	$(GTK_SHARP_LIBS) \
 	$(MONO_ADDINS_LIBS) \
-	-pkg:monodevelop \
 	-r:Mono.Cairo \
 	-r:Mono.Posix \
 	-r:System \
@@ -295,90 +297,86 @@ FILES =  \
 RES =  \
 	gtk-gui/gui.stetic \
 	gui.glade \
-	icons/actiongroup.png \
-	icons/dialog.png \
 	icons/gtk-logo.png \
 	icons/gtkx.png \
 	icons/image-x-generic.png \
-	icons/widget.png \
-	icons/window.png \
 	MonoDevelop.GtkCore2.addin.xml,MonoDevelop.GtkCore.addin.xml \
 	Stetic/action.png,MonoDevelop.GtkCore.Stetic.action.png \
 	Stetic/stetic.glade,MonoDevelop.GtkCore.Stetic.stetic.glade \
 	Stetic/Wrapper/objects.xml \
-	Stetic/Wrapper/pixmaps/accellabel.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.accellabel.png \
-	Stetic/Wrapper/pixmaps/actiongroup.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.actiongroup.png \
-	Stetic/Wrapper/pixmaps/add-check-label.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.add-check-label.png \
-	Stetic/Wrapper/pixmaps/add-menu.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.add-menu.png \
-	Stetic/Wrapper/pixmaps/alignment.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.alignment.png \
-	Stetic/Wrapper/pixmaps/arrow.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.arrow.png \
-	Stetic/Wrapper/pixmaps/box-expand.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.box-expand.png \
-	Stetic/Wrapper/pixmaps/box-fill.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.box-fill.png \
-	Stetic/Wrapper/pixmaps/button.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.button.png \
-	Stetic/Wrapper/pixmaps/calendar.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.calendar.png \
-	Stetic/Wrapper/pixmaps/cell-expand-h.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.cell-expand-h.png \
-	Stetic/Wrapper/pixmaps/cell-expand-v.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.cell-expand-v.png \
-	Stetic/Wrapper/pixmaps/cell-fill-h.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.cell-fill-h.png \
-	Stetic/Wrapper/pixmaps/cell-fill-v.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.cell-fill-v.png \
-	Stetic/Wrapper/pixmaps/checkbutton.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.checkbutton.png \
-	Stetic/Wrapper/pixmaps/colorbutton.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.colorbutton.png \
-	Stetic/Wrapper/pixmaps/colorselection.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.colorselection.png \
-	Stetic/Wrapper/pixmaps/colorselectiondialog.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.colorselectiondialog.png \
-	Stetic/Wrapper/pixmaps/combo.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.combo.png \
-	Stetic/Wrapper/pixmaps/comboentry.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.comboentry.png \
-	Stetic/Wrapper/pixmaps/custom.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.custom.png \
-	Stetic/Wrapper/pixmaps/dec-border.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.dec-border.png \
-	Stetic/Wrapper/pixmaps/dialog.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.dialog.png \
-	Stetic/Wrapper/pixmaps/drawingarea.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.drawingarea.png \
-	Stetic/Wrapper/pixmaps/entry.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.entry.png \
-	Stetic/Wrapper/pixmaps/eventbox.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.eventbox.png \
-	Stetic/Wrapper/pixmaps/expander.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.expander.png \
-	Stetic/Wrapper/pixmaps/fileselection.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.fileselection.png \
-	Stetic/Wrapper/pixmaps/fixed.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.fixed.png \
-	Stetic/Wrapper/pixmaps/fontbutton.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.fontbutton.png \
-	Stetic/Wrapper/pixmaps/fontselection.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.fontselection.png \
-	Stetic/Wrapper/pixmaps/fontselectiondialog.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.fontselectiondialog.png \
-	Stetic/Wrapper/pixmaps/frame.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.frame.png \
-	Stetic/Wrapper/pixmaps/globe.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.globe.png \
-	Stetic/Wrapper/pixmaps/globe-not.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.globe-not.png \
-	Stetic/Wrapper/pixmaps/handlebox.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.handlebox.png \
-	Stetic/Wrapper/pixmaps/hbox.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.hbox.png \
-	Stetic/Wrapper/pixmaps/hbuttonbox.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.hbuttonbox.png \
-	Stetic/Wrapper/pixmaps/hpaned.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.hpaned.png \
-	Stetic/Wrapper/pixmaps/hscale.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.hscale.png \
-	Stetic/Wrapper/pixmaps/hscrollbar.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.hscrollbar.png \
-	Stetic/Wrapper/pixmaps/hseparator.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.hseparator.png \
-	Stetic/Wrapper/pixmaps/iconview.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.iconview.png \
-	Stetic/Wrapper/pixmaps/image.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.image.png \
-	Stetic/Wrapper/pixmaps/inc-border.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.inc-border.png \
-	Stetic/Wrapper/pixmaps/label.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.label.png \
-	Stetic/Wrapper/pixmaps/menu.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.menu.png \
-	Stetic/Wrapper/pixmaps/menubar.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.menubar.png \
-	Stetic/Wrapper/pixmaps/messagedialog.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.messagedialog.png \
-	Stetic/Wrapper/pixmaps/missing.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.missing.png \
-	Stetic/Wrapper/pixmaps/notebook.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.notebook.png \
-	Stetic/Wrapper/pixmaps/optionmenu.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.optionmenu.png \
-	Stetic/Wrapper/pixmaps/progressbar.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.progressbar.png \
-	Stetic/Wrapper/pixmaps/radiobutton.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.radiobutton.png \
-	Stetic/Wrapper/pixmaps/remove-check-label.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.remove-check-label.png \
-	Stetic/Wrapper/pixmaps/remove-menu.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.remove-menu.png \
-	Stetic/Wrapper/pixmaps/scrolledwindow.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.scrolledwindow.png \
-	Stetic/Wrapper/pixmaps/spinbutton.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.spinbutton.png \
-	Stetic/Wrapper/pixmaps/statusbar.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.statusbar.png \
-	Stetic/Wrapper/pixmaps/table.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.table.png \
-	Stetic/Wrapper/pixmaps/textview.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.textview.png \
-	Stetic/Wrapper/pixmaps/togglebutton.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.togglebutton.png \
-	Stetic/Wrapper/pixmaps/toolbar.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.toolbar.png \
-	Stetic/Wrapper/pixmaps/treeview.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.treeview.png \
-	Stetic/Wrapper/pixmaps/vbox.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.vbox.png \
-	Stetic/Wrapper/pixmaps/vbuttonbox.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.vbuttonbox.png \
-	Stetic/Wrapper/pixmaps/viewport.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.viewport.png \
-	Stetic/Wrapper/pixmaps/vpaned.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.vpaned.png \
-	Stetic/Wrapper/pixmaps/vscale.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.vscale.png \
-	Stetic/Wrapper/pixmaps/vscrollbar.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.vscrollbar.png \
-	Stetic/Wrapper/pixmaps/vseparator.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.vseparator.png \
-	Stetic/Wrapper/pixmaps/widget.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.widget.png \
-	Stetic/Wrapper/pixmaps/window.png,MonoDevelop.GtkCore.Stetic.Wrapper.pixmaps.window.png \
+	Stetic/Wrapper/pixmaps/accellabel.png \
+	Stetic/Wrapper/pixmaps/actiongroup.png \
+	Stetic/Wrapper/pixmaps/add-check-label.png \
+	Stetic/Wrapper/pixmaps/add-menu.png \
+	Stetic/Wrapper/pixmaps/alignment.png \
+	Stetic/Wrapper/pixmaps/arrow.png \
+	Stetic/Wrapper/pixmaps/box-expand.png \
+	Stetic/Wrapper/pixmaps/box-fill.png \
+	Stetic/Wrapper/pixmaps/button.png \
+	Stetic/Wrapper/pixmaps/calendar.png \
+	Stetic/Wrapper/pixmaps/cell-expand-h.png \
+	Stetic/Wrapper/pixmaps/cell-expand-v.png \
+	Stetic/Wrapper/pixmaps/cell-fill-h.png \
+	Stetic/Wrapper/pixmaps/cell-fill-v.png \
+	Stetic/Wrapper/pixmaps/checkbutton.png \
+	Stetic/Wrapper/pixmaps/colorbutton.png \
+	Stetic/Wrapper/pixmaps/colorselection.png \
+	Stetic/Wrapper/pixmaps/colorselectiondialog.png \
+	Stetic/Wrapper/pixmaps/combo.png \
+	Stetic/Wrapper/pixmaps/comboentry.png \
+	Stetic/Wrapper/pixmaps/custom.png \
+	Stetic/Wrapper/pixmaps/dec-border.png \
+	Stetic/Wrapper/pixmaps/dialog.png \
+	Stetic/Wrapper/pixmaps/drawingarea.png \
+	Stetic/Wrapper/pixmaps/entry.png \
+	Stetic/Wrapper/pixmaps/eventbox.png \
+	Stetic/Wrapper/pixmaps/expander.png \
+	Stetic/Wrapper/pixmaps/fileselection.png \
+	Stetic/Wrapper/pixmaps/fixed.png \
+	Stetic/Wrapper/pixmaps/fontbutton.png \
+	Stetic/Wrapper/pixmaps/fontselection.png \
+	Stetic/Wrapper/pixmaps/fontselectiondialog.png \
+	Stetic/Wrapper/pixmaps/frame.png \
+	Stetic/Wrapper/pixmaps/globe.png \
+	Stetic/Wrapper/pixmaps/globe-not.png \
+	Stetic/Wrapper/pixmaps/handlebox.png \
+	Stetic/Wrapper/pixmaps/hbox.png \
+	Stetic/Wrapper/pixmaps/hbuttonbox.png \
+	Stetic/Wrapper/pixmaps/hpaned.png \
+	Stetic/Wrapper/pixmaps/hscale.png \
+	Stetic/Wrapper/pixmaps/hscrollbar.png \
+	Stetic/Wrapper/pixmaps/hseparator.png \
+	Stetic/Wrapper/pixmaps/iconview.png \
+	Stetic/Wrapper/pixmaps/image.png \
+	Stetic/Wrapper/pixmaps/inc-border.png \
+	Stetic/Wrapper/pixmaps/label.png \
+	Stetic/Wrapper/pixmaps/menu.png \
+	Stetic/Wrapper/pixmaps/menubar.png \
+	Stetic/Wrapper/pixmaps/messagedialog.png \
+	Stetic/Wrapper/pixmaps/missing.png \
+	Stetic/Wrapper/pixmaps/notebook.png \
+	Stetic/Wrapper/pixmaps/optionmenu.png \
+	Stetic/Wrapper/pixmaps/progressbar.png \
+	Stetic/Wrapper/pixmaps/radiobutton.png \
+	Stetic/Wrapper/pixmaps/remove-check-label.png \
+	Stetic/Wrapper/pixmaps/remove-menu.png \
+	Stetic/Wrapper/pixmaps/scrolledwindow.png \
+	Stetic/Wrapper/pixmaps/spinbutton.png \
+	Stetic/Wrapper/pixmaps/statusbar.png \
+	Stetic/Wrapper/pixmaps/table.png \
+	Stetic/Wrapper/pixmaps/textview.png \
+	Stetic/Wrapper/pixmaps/togglebutton.png \
+	Stetic/Wrapper/pixmaps/toolbar.png \
+	Stetic/Wrapper/pixmaps/treeview.png \
+	Stetic/Wrapper/pixmaps/vbox.png \
+	Stetic/Wrapper/pixmaps/vbuttonbox.png \
+	Stetic/Wrapper/pixmaps/viewport.png \
+	Stetic/Wrapper/pixmaps/vpaned.png \
+	Stetic/Wrapper/pixmaps/vscale.png \
+	Stetic/Wrapper/pixmaps/vscrollbar.png \
+	Stetic/Wrapper/pixmaps/vseparator.png \
+	Stetic/Wrapper/pixmaps/widget.png \
+	Stetic/Wrapper/pixmaps/window.png \
 	templates/ActionGroup.xft.xml \
 	templates/ActionGroupPartial.xft.xml \
 	templates/Dialog.xft.xml \

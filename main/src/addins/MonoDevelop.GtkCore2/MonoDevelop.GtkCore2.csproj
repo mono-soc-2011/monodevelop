@@ -59,15 +59,6 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="NRefactory, Version=2.1.1.0, Culture=neutral, PublicKeyToken=efe927acf176eea2">
-      <Package>monodevelop</Package>
-    </Reference>
-    <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral">
-      <Package>monodevelop</Package>
-    </Reference>
-    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5e9ce85b0923c84f">
-      <Package>monodevelop</Package>
-    </Reference>
     <Reference Include="Mono.Addins, Version=0.6.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="Mono.Cairo" />
@@ -92,6 +83,18 @@
     <ProjectReference Include="..\Deployment\MonoDevelop.Deployment\MonoDevelop.Deployment.csproj">
       <Project>{9BC670A8-1851-40EC-9685-279F4C98433D}</Project>
       <Name>MonoDevelop.Deployment</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\core\Mono.Debugging\Mono.Debugging.csproj">
+      <Project>{90C99ADB-7D4B-4EB4-98C2-40BD1B14C7D2}</Project>
+      <Name>Mono.Debugging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\contrib\NRefactory\Project\NRefactory.csproj">
+      <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
+      <Name>NRefactory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\core\Mono.Texteditor\Mono.TextEditor.csproj">
+      <Project>{A2329308-3751-4DBD-9A75-5F7B8B024625}</Project>
+      <Name>Mono.TextEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -133,12 +136,6 @@
     <EmbeddedResource Include="templates\WindowPartial.xft.xml">
       <LogicalName>WindowPartial.xft.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="icons\widget.png">
-      <LogicalName>widget.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="icons\actiongroup.png">
-      <LogicalName>actiongroup.png</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="icons\image-x-generic.png">
       <LogicalName>image-x-generic.png</LogicalName>
     </EmbeddedResource>
@@ -157,87 +154,227 @@
     <EmbeddedResource Include="Stetic\Wrapper\objects.xml">
       <LogicalName>objects.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\accellabel.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\actiongroup.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\add-check-label.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\add-menu.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\alignment.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\arrow.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\box-expand.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\box-fill.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\button.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\calendar.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-expand-h.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-expand-v.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-fill-h.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-fill-v.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\checkbutton.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorbutton.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorselection.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorselectiondialog.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\combo.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\comboentry.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\custom.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\dec-border.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\dialog.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\drawingarea.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\entry.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\eventbox.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\expander.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fileselection.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fixed.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontbutton.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontselection.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontselectiondialog.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\frame.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\globe-not.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\globe.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\handlebox.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hbox.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hbuttonbox.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hpaned.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hscale.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hscrollbar.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hseparator.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\iconview.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\image.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\inc-border.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\label.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\menu.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\menubar.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\messagedialog.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\missing.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\notebook.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\optionmenu.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\progressbar.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\radiobutton.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\remove-check-label.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\remove-menu.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\scrolledwindow.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\spinbutton.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\statusbar.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\table.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\textview.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\togglebutton.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\toolbar.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\treeview.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vbox.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vbuttonbox.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\viewport.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vpaned.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vscale.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vscrollbar.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vseparator.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\widget.png" />
-    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\window.png" />
-    <EmbeddedResource Include="Stetic\stetic.glade" />
-    <EmbeddedResource Include="Stetic\action.png" />
-    <EmbeddedResource Include="icons\window.png">
-      <LogicalName>window.png</LogicalName>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\accellabel.png">
+      <LogicalName>accellabel.png</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="icons\dialog.png">
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\actiongroup.png">
+      <LogicalName>actiongroup.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\add-check-label.png">
+      <LogicalName>add-check-label.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\add-menu.png">
+      <LogicalName>add-menu.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\alignment.png">
+      <LogicalName>alignment.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\arrow.png">
+      <LogicalName>arrow.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\box-expand.png">
+      <LogicalName>box-expand.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\box-fill.png">
+      <LogicalName>box-fill.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\button.png">
+      <LogicalName>button.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\calendar.png">
+      <LogicalName>calendar.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-expand-h.png">
+      <LogicalName>cell-expand-h.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-expand-v.png">
+      <LogicalName>cell-expand-v.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-fill-h.png">
+      <LogicalName>cell-fill-h.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\cell-fill-v.png">
+      <LogicalName>cell-fill-v.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\checkbutton.png">
+      <LogicalName>checkbutton.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorbutton.png">
+      <LogicalName>colorbutton.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorselection.png">
+      <LogicalName>colorselection.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\colorselectiondialog.png">
+      <LogicalName>colorselectiondialog.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\combo.png">
+      <LogicalName>combo.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\comboentry.png">
+      <LogicalName>comboentry.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\custom.png">
+      <LogicalName>custom.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\dec-border.png">
+      <LogicalName>dec-border.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\dialog.png">
       <LogicalName>dialog.png</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\drawingarea.png">
+      <LogicalName>drawingarea.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\entry.png">
+      <LogicalName>entry.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\eventbox.png">
+      <LogicalName>eventbox.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\expander.png">
+      <LogicalName>expander.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fileselection.png">
+      <LogicalName>fileselection.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fixed.png">
+      <LogicalName>fixed.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontbutton.png">
+      <LogicalName>fontbutton.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontselection.png">
+      <LogicalName>fontselection.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\fontselectiondialog.png">
+      <LogicalName>fontselectiondialog.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\frame.png">
+      <LogicalName>frame.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\globe-not.png">
+      <LogicalName>globe-not.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\globe.png">
+      <LogicalName>globe.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\handlebox.png">
+      <LogicalName>handlebox.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hbox.png">
+      <LogicalName>hbox.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hbuttonbox.png">
+      <LogicalName>hbuttonbox.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hpaned.png">
+      <LogicalName>hpaned.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hscale.png">
+      <LogicalName>hscale.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hscrollbar.png">
+      <LogicalName>hscrollbar.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\hseparator.png">
+      <LogicalName>hseparator.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\iconview.png">
+      <LogicalName>iconview.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\image.png">
+      <LogicalName>image.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\inc-border.png">
+      <LogicalName>inc-border.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\label.png">
+      <LogicalName>label.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\menu.png">
+      <LogicalName>menu.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\menubar.png">
+      <LogicalName>menubar.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\messagedialog.png">
+      <LogicalName>messagedialog.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\missing.png">
+      <LogicalName>missing.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\notebook.png">
+      <LogicalName>notebook.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\optionmenu.png">
+      <LogicalName>optionmenu.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\progressbar.png">
+      <LogicalName>progressbar.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\radiobutton.png">
+      <LogicalName>radiobutton.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\remove-check-label.png">
+      <LogicalName>remove-check-label.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\remove-menu.png">
+      <LogicalName>remove-menu.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\scrolledwindow.png">
+      <LogicalName>scrolledwindow.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\spinbutton.png">
+      <LogicalName>spinbutton.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\statusbar.png">
+      <LogicalName>statusbar.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\table.png">
+      <LogicalName>table.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\textview.png">
+      <LogicalName>textview.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\togglebutton.png">
+      <LogicalName>togglebutton.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\toolbar.png">
+      <LogicalName>toolbar.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\treeview.png">
+      <LogicalName>treeview.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vbox.png">
+      <LogicalName>vbox.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vbuttonbox.png">
+      <LogicalName>vbuttonbox.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\viewport.png">
+      <LogicalName>viewport.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vpaned.png">
+      <LogicalName>vpaned.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vscale.png">
+      <LogicalName>vscale.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vscrollbar.png">
+      <LogicalName>vscrollbar.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\vseparator.png">
+      <LogicalName>vseparator.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\widget.png">
+      <LogicalName>widget.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\Wrapper\pixmaps\window.png">
+      <LogicalName>window.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stetic\stetic.glade" />
+    <EmbeddedResource Include="Stetic\action.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MonoDevelop.GtkCore.GuiBuilder\ClassUtils.cs" />

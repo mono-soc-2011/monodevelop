@@ -361,6 +361,11 @@ namespace Stetic
 		void CreatePathForWidget (Wrapper.Widget widget) 
 		{
 			var entries = new List<PathEntry> ();
+			if (widget is Wrapper.Container || widget == null) {
+				var noentry = new PathEntry ("No selection");
+				noentry.Position = EntryPosition.Left;
+				entries.Add (noentry);
+			}
 			while (widget != RootWidget && widget != null) {				
 				var text = widget.Name;
 				var icon = widget.ClassDescriptor.Icon.ScaleSimple (16, 16, Gdk.InterpType.Bilinear);
@@ -370,11 +375,8 @@ namespace Stetic
 				
 				widget = widget.ParentWrapper;
 			} 
+			
 			entries.Reverse ();
-		
-			var noentry = new PathEntry ("No selection");
-			noentry.Position = EntryPosition.Left;
-			entries.Add (noentry);
 			path = entries.ToArray ();	
 			pathbar.SetPath (path);
 		}
