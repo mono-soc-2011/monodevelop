@@ -40,8 +40,8 @@ namespace Stetic
 			combo = new WidgetTreeCombo ();
 			comboItem = new ToolItem ();
 			comboItem.Add (combo);
-			comboItem.ShowAll ();
-			Insert (comboItem, -1);
+//			comboItem.ShowAll ();
+//			Insert (comboItem, -1);
 			ShowAll ();
 			RootWidget = rootWidget;
 		}

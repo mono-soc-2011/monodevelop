@@ -2,7 +2,7 @@
 // WidgetEditSession.cs
 //
 // Author:
-//   Lluis Sanchez Gual
+//   Lluis Sanchez Gual, Krzysztof Marecki
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -31,10 +31,15 @@ using System;
 using System.Xml;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.CodeDom;
 using Mono.Unix;
 
-namespace Stetic {
+using MonoDevelop.Components;
+using MonoDevelop.Core;
+
+namespace Stetic 
+{
     
 	internal class WidgetEditSession: MarshalByRefObject, IDisposable
 	{
@@ -46,6 +51,8 @@ namespace Stetic {
 		Gtk.VBox designer;
 		Gtk.Plug plug;
 		WidgetActionBar toolbar;
+		PathBar pathbar;
+		PathEntry[] path;
 		WidgetDesignerFrontend frontend;
 		bool allowBinding;
 		bool disposed;
@@ -74,6 +81,7 @@ namespace Stetic {
 			this.project.ProjectReloaded += new EventHandler (OnProjectReloaded);
 			this.project.ProjectReloading += new EventHandler (OnProjectReloading);
 //			this.project.WidgetMemberNameChanged += new Stetic.Wrapper.WidgetNameChangedHandler (OnWidgetNameChanged);
+			this.project.SelectionChanged += new Wrapper.WidgetEventHandler(OnProjectSelectionChanged);
 		}
 		
 		public bool AllowWidgetBinding {
@@ -104,14 +112,18 @@ namespace Stetic {
 					
 					toolbar = new WidgetActionBar (frontend, rootWidget);
 					toolbar.AllowWidgetBinding = allowBinding;
+					pathbar = new PathBar (CreatePathWidget);
 					designer = new Gtk.VBox ();
 					designer.BorderWidth = 3;
-					designer.PackStart (toolbar, false, false, 0);
+					designer.PackStart (pathbar, false, true, 0);
+					designer.PackStart (toolbar, false, false, 1);
 					designer.PackStart (widget, true, true, 3);
 					widget.DesignArea.SetSelection (project.Selection, project.Selection, false);
 					
 					widget.SelectionChanged += OnSelectionChanged;
-				
+					
+					CreatePathForWidget (RootWidget);
+					pathbar.Show ();
 				}
 				return designer; 
 			}
@@ -306,6 +318,83 @@ namespace Stetic {
 				if (SelectionChanged != null)
 					SelectionChanged (this, new Stetic.Wrapper.WidgetEventArgs (wrapper));
 			}
+		}
+		
+		
+		Gtk.Widget CreatePathWidget (int index)
+		{
+			Gtk.Menu menu = new Gtk.Menu ();
+			
+			if (path != null && RootWidget != null) {
+				Wrapper.Container parent;
+				if (index > 0) {
+					PathEntry entry = path [index - 1];
+					parent = (Wrapper.Container) RootWidget.FindChild (entry.Text);
+				} else {
+					parent = RootWidget;
+				}
+				string name = path [index].Text;
+				var container = (Gtk.Container)parent.Wrapped;
+				foreach (Gtk.Widget widget in container.Children) {
+					var wrapper = ObjectWrapper.Lookup (widget);
+					if (wrapper != null) {
+						//widget name could contain underscore
+						//MenuItem constructor strips underscore from label 
+						//and makes following letter underlined
+						var mi = new Gtk.ImageMenuItem (string.Empty);
+						var label = (Gtk.Label) mi.Child;
+						label.Text = wrapper.Name;
+						var icon = wrapper.ClassDescriptor.Icon.ScaleSimple (16, 16, Gdk.InterpType.Bilinear);
+						mi.Image = new Gtk.Image (icon);
+						if (name == wrapper.Name) {
+							mi.Select ();
+						}
+						menu.Add (mi);
+						mi.Activated += OnMenuItemActivated;
+					}
+				}
+			}
+			menu.ShowAll ();
+			return menu;	
+		}
+		
+		void CreatePathForWidget (Wrapper.Widget widget) 
+		{
+			var entries = new List<PathEntry> ();
+			while (widget != RootWidget && widget != null) {				
+				var text = widget.Name;
+				var icon = widget.ClassDescriptor.Icon.ScaleSimple (16, 16, Gdk.InterpType.Bilinear);
+				var entry = new PathEntry (icon, text);
+				entry.Position = EntryPosition.Left;
+				entries.Add (entry);
+				
+				widget = widget.ParentWrapper;
+			} 
+			entries.Reverse ();
+		
+			var noentry = new PathEntry ("No selection");
+			noentry.Position = EntryPosition.Left;
+			entries.Add (noentry);
+			path = entries.ToArray ();	
+			pathbar.SetPath (path);
+		}
+		
+		void OnProjectSelectionChanged (object s, Wrapper.WidgetEventArgs args)
+		{
+			if (pathbar == null)
+				return;
+			
+			var selection = (Wrapper.Widget)args.WidgetWrapper;
+			CreatePathForWidget (selection);
+		}
+		
+		void OnMenuItemActivated (object sender, EventArgs e)
+		{
+			var mi = (Gtk.ImageMenuItem) sender;
+			var label = (Gtk.Label) mi.Child;
+			
+			var widget = (Wrapper.Widget) RootWidget.FindChild (label.LabelProp);
+			widget.Select ();
 		}
 		
 		public object SaveState ()
