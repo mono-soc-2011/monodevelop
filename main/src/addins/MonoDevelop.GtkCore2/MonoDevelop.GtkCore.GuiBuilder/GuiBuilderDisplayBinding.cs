@@ -90,7 +90,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 				return null;
 
 			GtkDesignInfo info = GtkDesignInfo.FromProject (project);
-			if (file.StartsWith (info.SteticFolder))
+			if (file.StartsWith (info.SteticFolder) || file.Contains (info.BuildFileExtension))
 				return null;
 
 			ParsedDocument doc = ProjectDomService.GetParsedDocument (null, file);
