@@ -324,11 +324,12 @@ namespace Stetic
 		Gtk.Widget CreatePathWidget (int index)
 		{
 			Gtk.Menu menu = new Gtk.Menu ();
+			PathEntry entry;
 			
 			if (path != null && RootWidget != null) {
 				Wrapper.Container parent;
 				if (index > 0) {
-					PathEntry entry = path [index - 1];
+					entry = path [index - 1];
 					parent = (Wrapper.Container) RootWidget.FindChild (entry.Text);
 				} else {
 					parent = RootWidget;
@@ -336,7 +337,7 @@ namespace Stetic
 				string name = path [index].Text;
 				var container = (Gtk.Container)parent.Wrapped;
 				foreach (Gtk.Widget widget in container.Children) {
-					var wrapper = ObjectWrapper.Lookup (widget);
+					var wrapper = (Wrapper.Widget)ObjectWrapper.Lookup (widget);
 					if (wrapper != null) {
 						//widget name could contain underscore
 						//MenuItem constructor strips underscore from label 
@@ -348,6 +349,7 @@ namespace Stetic
 						mi.Image = new Gtk.Image (icon);
 						if (name == wrapper.Name) {
 							mi.Select ();
+							wrapper.Select ();
 						}
 						menu.Add (mi);
 						mi.Activated += OnMenuItemActivated;
