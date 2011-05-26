@@ -78,6 +78,8 @@ namespace MonoDevelop.GtkCore
 			IExtendedDataItem item = (IExtendedDataItem) project;
 			item.ExtendedProperties ["GtkDesignInfo"] = this;
 			Project = project;
+			
+			LoggingService.LogDebug ("GtkDesignInfo for {0} constructed", project.Name);
 		}
 		
 		DotNetProject Project {
@@ -235,8 +237,9 @@ namespace MonoDevelop.GtkCore
 		{
 			if (project == null)
 				return false;
-
-			return SupportsDesigner (project);
+	
+			GtkDesignInfo info = FromProject (project);
+			return SupportsDesigner (project) && Directory.Exists (info.SteticFolder.FullPath);
 		}
 
 		public static bool SupportsDesigner (Project project)
