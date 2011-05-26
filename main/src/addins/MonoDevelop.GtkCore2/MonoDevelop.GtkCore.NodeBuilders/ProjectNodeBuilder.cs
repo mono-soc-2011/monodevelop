@@ -76,21 +76,21 @@ namespace MonoDevelop.GtkCore.NodeBuilders
 			Project project = dataObject as Project;
 			
 			if (project is DotNetProject) {
-				GtkDesignInfo info = GtkDesignInfo.FromProject (project);
-				
-				if (info.NeedsConversion) {
-					ProjectConversionDialog dialog = new ProjectConversionDialog (project, info.SteticFolderName);
-					
-					try
-					{
-						if (dialog.Run () == (int)ResponseType.Yes) {
-							info.GuiBuilderProject.Convert (dialog.GuiFolderName, dialog.MakeBackup);
-							IdeApp.ProjectOperations.Save (project);
-						}
-					} finally {
-						dialog.Destroy ();
-					}
-				}
+//				GtkDesignInfo info = GtkDesignInfo.FromProject (project);
+//				
+//				if (info.NeedsConversion) {
+//					ProjectConversionDialog dialog = new ProjectConversionDialog (project, info.SteticFolderName);
+//					
+//					try
+//					{
+//						if (dialog.Run () == (int)ResponseType.Yes) {
+//							info.GuiBuilderProject.Convert (dialog.GuiFolderName, dialog.MakeBackup);
+//							IdeApp.ProjectOperations.Save (project);
+//						}
+//					} finally {
+//						dialog.Destroy ();
+//					}
+//				}
 				
 				project.FileAddedToProject += HandleProjectFileAddedToProject;
 			}

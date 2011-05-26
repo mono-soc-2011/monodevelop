@@ -144,7 +144,11 @@
 	</Extension>
 	
 	<Extension path = "/MonoDevelop/Ide/StartupHandlers">
-		<Class class="MonoDevelop.GtkCore.GtkCoreStartupCommand" />
+		<Class class="MonoDevelop.GtkCore.StartupCommand" />
+	</Extension>
+	
+	<Extension path = "/MonoDevelop/Ide/InitCompleteHandlers">
+		<Class class="MonoDevelop.GtkCore.InitCompleteCommand" />
 	</Extension>
 	
 	<Extension path = "/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Common">

@@ -2,7 +2,7 @@
 // GtkCoreService.cs
 //
 // Author:
-//   Lluis Sanchez Gual
+//   Lluis Sanchez Gual, Krzysztof Marecki
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -28,16 +28,55 @@
 
 using System;
 using System.Collections.Generic;
+using Gtk;
 using MonoDevelop.Core;
 using MonoDevelop.Components.Commands;
+using MonoDevelop.Ide;
+using MonoDevelop.Projects;
+using MonoDevelop.GtkCore.Dialogs;
 
 namespace MonoDevelop.GtkCore
 {
-	class GtkCoreStartupCommand: CommandHandler
+	class StartupCommand: CommandHandler
 	{
 		protected override void Run()
 		{
 			ReferenceManager.Initialize ();
+		}
+	}
+	
+	class InitCompleteCommand : CommandHandler
+	{
+		protected override void Run ()
+		{
+			IdeApp.Workspace.SolutionLoaded += HandleWorkspaceSolutionLoaded;
+		}
+		
+		void ConvertSolution (Solution solution)
+		{
+			foreach (Project project in solution.GetAllProjects ())
+			{
+				GtkDesignInfo info = GtkDesignInfo.FromProject (project);
+				
+				if (info.NeedsConversion) {
+					ProjectConversionDialog dialog = new ProjectConversionDialog (project, info.SteticFolderName);
+					
+					try
+					{
+						if (dialog.Run () == (int)ResponseType.Yes) {
+							info.GuiBuilderProject.Convert (dialog.GuiFolderName, dialog.MakeBackup);
+							IdeApp.ProjectOperations.Save (project);
+						}
+					} finally {
+						dialog.Destroy ();
+					}
+				}
+			}
+		}
+		
+		void HandleWorkspaceSolutionLoaded (object sender, SolutionEventArgs e)
+		{
+			ConvertSolution (e.Solution);
 		}
 	}
 }
