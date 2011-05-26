@@ -205,7 +205,7 @@
 		<Panel _label = "GTK# Designer" class = "MonoDevelop.GtkCore.Dialogs.GtkDesignerOptionPanel"  />
 	</Extension>
 	
-	<Extension path = "/MonoDevelop/XmlEditor/XmlFileExtensions">
-		 <XmlFileExtension extension = ".gtkx"/>
+	<Extension path = "/MonoDevelop/XmlEditor/XmlFileAssociations">
+		 <Association extension = ".gtkx"/>
 	</Extension>
 </Addin>
