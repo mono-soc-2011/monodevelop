@@ -11,8 +11,6 @@ namespace Stetic
 	{
 		ProjectBackend project;
 		Stetic.Wrapper.Widget rootWidget;
-		WidgetTreeCombo combo;
-		ToolItem comboItem;
 		Stetic.Wrapper.Widget selection;
 		Stetic.Wrapper.Container.ContainerChild packingSelection;
 		Hashtable editors, wrappers;
@@ -37,11 +35,6 @@ namespace Stetic
 			Orientation = Orientation.Horizontal;
 			ToolbarStyle = ToolbarStyle.BothHoriz;
 
-			combo = new WidgetTreeCombo ();
-			comboItem = new ToolItem ();
-			comboItem.Add (combo);
-//			comboItem.ShowAll ();
-//			Insert (comboItem, -1);
 			ShowAll ();
 			RootWidget = rootWidget;
 		}
@@ -51,8 +44,6 @@ namespace Stetic
 			if (disposed)
 				return;
 			disposed = true;
-			combo.Destroy ();
-			combo = null;
 			RootWidget = null;
 			Clear ();
 			base.Dispose ();
@@ -72,8 +63,6 @@ namespace Stetic
 				}
 				
 				rootWidget = value;
-				if (combo != null)
-					combo.RootWidget = rootWidget;
 				
 				if (rootWidget != null) {
 					project = (Stetic.ProjectBackend) rootWidget.Project;
@@ -100,11 +89,10 @@ namespace Stetic
 			invisibles.Clear ();
 			toggles.Clear ();
 				
-			foreach (Gtk.Widget child in Children)
-				if (child != comboItem) {
-					Remove (child);
-					child.Destroy ();
-				}
+			foreach (Gtk.Widget child in Children) {
+				Remove (child);
+				child.Destroy ();
+			}
 		}
 		
 		void OnSelectionChanged (object s, Wrapper.WidgetEventArgs args)
@@ -116,11 +104,6 @@ namespace Stetic
 		{
 			Clear ();
 			selection = w;
-			
-			if (selection == null) {
-				combo.SetSelection (null);
-				return;
-			}
 
 			// Look for the root widget, and only update the bar if the selected
 			// widget is a child of the root widget
@@ -130,8 +113,6 @@ namespace Stetic
 			}
 			if (w == null || w != rootWidget)
 				return;
-
-			combo.SetSelection (selection);
 			
 			selection.Notify += Notified;
 			packingSelection = Stetic.Wrapper.Container.ChildWrapper (selection);
