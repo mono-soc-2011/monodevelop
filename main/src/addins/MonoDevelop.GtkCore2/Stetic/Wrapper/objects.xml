@@ -32,6 +32,14 @@
 			init-with-name="true" 
 			editor="Stetic.Editor.Identifier"/>
 	    </itemgroup>
+			<itemgroup name="Commands">
+			<command name="InsertIntoAlignment" label="Insert widget into alignment">
+				<invisible-if check="CheckInsertIntoAlignment" />
+			</command>
+			<command name="RemoveFromAlignment" label="Remove widget from alignment">
+				<invisible-if check="CheckRemoveFromAlignment" />
+			</command>
+	    </itemgroup>
 	</itemgroups>
     <signals>
     	<itemgroup label="Common Widget Signals">

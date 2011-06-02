@@ -797,6 +797,48 @@ namespace Stetic.Wrapper {
 			}
 		}
 		
+		internal void InsertIntoAlignment ()
+		{
+			Wrapper.Container parent = (Wrapper.Container)ParentWrapper;
+			string className = "Gtk.Alignment";
+			ClassDescriptor cls = Registry.LookupClassByName (className);
+			Gtk.Alignment align = (Gtk.Alignment)cls.NewInstance (Project);
+			parent.PasteChild (Wrapped, align);
+			
+			Wrapper.Container container = (Wrapper.Container)ObjectWrapper.Lookup (align);
+			Placeholder placeholder = (Placeholder)align.Child;
+			//After PasteChild. this wrapper cannot be looked up, DropObject will fail
+			Wrap (Wrapped, false);
+			container.DropObject (placeholder.UndoId, Wrapped);
+		}
+		
+		internal void RemoveFromAlignment ()
+		{
+			Wrapper.Container parent = (Wrapper.Container)ParentWrapper;
+			Gtk.Alignment align = (Gtk.Alignment) parent.Wrapped;
+			Wrapper.Container parentalign = (Wrapper.Container)parent.ParentWrapper;
+			
+			align.Remove (Wrapped);
+			//To trigger SelectionChanged event after PasteChild needed for WidgetActionBar update
+			parentalign.Select ();
+			parentalign.PasteChild (align, Wrapped);
+		}
+		
+		public bool CheckInsertIntoAlignment ()
+		{
+			bool check = !(Wrapped.Parent is Gtk.Alignment) && !(Wrapped is Gtk.Alignment);
+			return check;
+		}
+		
+		public bool CheckRemoveFromAlignment ()
+		{
+			bool check = (Wrapped.Parent is Gtk.Alignment) && !(Wrapped is Gtk.Alignment);
+			return check;
+		}
+		
+		
+		
+		
 		internal void UpdateScrolledWindow ()
 		{
 			if (ParentWrapper == null)
