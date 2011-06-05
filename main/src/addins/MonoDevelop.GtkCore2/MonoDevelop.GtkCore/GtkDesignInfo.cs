@@ -371,8 +371,11 @@ namespace MonoDevelop.GtkCore
 			FileService.CreateDirectory (SteticFolder);
 			bool projectModified = false;
 			
-			foreach (string filename in GetDesignerFiles ()) {
-				ProjectFile pf = project.AddFile (filename, BuildAction.EmbeddedResource);
+			string[] designerFiles = GetDesignerFiles ();
+			foreach (string filename in designerFiles) {
+				ProjectFile pf = project.IsFileInProject (filename) ?
+					project.GetProjectFile (filename) :
+					project.AddFile (filename, BuildAction.EmbeddedResource);
 				pf.ResourceId = Path.GetFileName (filename);
 	
 				string componentFile = GetComponentFileFromDesigner (filename);
@@ -381,7 +384,7 @@ namespace MonoDevelop.GtkCore
 					pf.DependsOn = componentFile;	
 				
 					string buildFile = GetBuildFileFromComponent (componentFile);
-					if (buildFile != null && File.Exists (buildFile)) {
+					if (buildFile != null && File.Exists (buildFile) && !project.IsFileInProject (buildFile)) {
 						ProjectFile pf2 = project.AddFile (buildFile, BuildAction.Compile);
 						pf2.ResourceId = Path.GetFileName (buildFile);
 						pf2.DependsOn = componentFile;
