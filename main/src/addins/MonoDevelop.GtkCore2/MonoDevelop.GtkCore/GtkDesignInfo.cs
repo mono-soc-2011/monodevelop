@@ -373,17 +373,23 @@ namespace MonoDevelop.GtkCore
 			
 			string[] designerFiles = GetDesignerFiles ();
 			foreach (string filename in designerFiles) {
-				ProjectFile pf = project.IsFileInProject (filename) ?
-					project.GetProjectFile (filename) :
-					project.AddFile (filename, BuildAction.EmbeddedResource);
-				pf.ResourceId = Path.GetFileName (filename);
+				ProjectFile pf = null;
+				if (!project.IsFileInProject (filename)) {
+					pf = project.AddFile (filename, BuildAction.EmbeddedResource);
+					pf.ResourceId = Path.GetFileName (filename);
+				} else {
+					pf = project.GetProjectFile (filename);
+				}
 	
 				string componentFile = GetComponentFileFromDesigner (filename);
 				
 				if (componentFile != null && File.Exists (componentFile)) { 
-					pf.DependsOn = componentFile;	
-				
+					if (pf.DependsOn != componentFile) {
+						pf.DependsOn = componentFile;	
+					}
+					
 					string buildFile = GetBuildFileFromComponent (componentFile);
+					
 					if (buildFile != null && File.Exists (buildFile) && !project.IsFileInProject (buildFile)) {
 						ProjectFile pf2 = project.AddFile (buildFile, BuildAction.Compile);
 						pf2.ResourceId = Path.GetFileName (buildFile);
