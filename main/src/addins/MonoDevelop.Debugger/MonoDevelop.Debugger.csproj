@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -49,6 +49,7 @@
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Mono.Posix" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
@@ -86,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\ColorVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\GdkColorVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\ImageVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger\StackTracePad.cs" />
     <Compile Include="MonoDevelop.Debugger\ObjectValueTreeView.cs" />
     <Compile Include="MonoDevelop.Debugger\WatchPad.cs" />
@@ -209,7 +213,5 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="MonoDevelop.Debugger.Visualizer\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
