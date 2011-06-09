@@ -225,6 +225,7 @@
 		<property name="Ypad" />
 		<property name="Xalign" min="0.0" max="1.0" />
 		<property name="Yalign" min="0.0" max="1.0" />
+		<property name="Alignment"/>
 		<command name="AlignLeft" label="Align Left" icon="gtk-justify-left" />
 		<command name="AlignCenter" label="Align Center" icon="gtk-justify-center" />
 		<command name="AlignRight" label="Align Right" icon="gtk-justify-right" />
@@ -2278,5 +2279,13 @@
 	<value name="Ltr" label="Left to right"
 	       description="Left to right" />
     </enum>
+	<enum type="Stetic.Wrapper.HorizontalAlignments">
+	<value name="AlignLeft" label="Align to left"
+		   description="Align to left"/>
+	<value name="AlignCenter" label="Align to center"
+		   description="Align to center"/>
+	<value name="AlignRight" label="Align to right"
+		   description="Align to right"/>
+	</enum>
 
 </objects>
