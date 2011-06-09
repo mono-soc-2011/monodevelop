@@ -1,17 +1,8 @@
-
 using System;
 
 namespace Stetic.Wrapper
 {
-	public enum HorizontalAlignments 
-	{
-		AlignLeft,
-		AlignCenter,
-		AlignRight,
-		None
-	}
-	
-	public class Misc: Widget
+	public class Alignment : Container
 	{
 		public HorizontalAlignments Horizontal {
 			get {
@@ -37,29 +28,30 @@ namespace Stetic.Wrapper
 		
 		public bool AlignLeft {
 			get {
-				return ((Gtk.Misc)Wrapped).Xalign == 0;
+				return ((Gtk.Alignment)Wrapped).Xalign == 0;
 			}
 			set {
-				((Gtk.Misc)Wrapped).Xalign = 0;
+				((Gtk.Alignment)Wrapped).Xalign = 0;
 			}
 		}
 		
 		public bool AlignRight {
 			get {
-				return ((Gtk.Misc)Wrapped).Xalign == 1;
+				return ((Gtk.Alignment)Wrapped).Xalign == 1;
 			}
 			set {
-				((Gtk.Misc)Wrapped).Xalign = 1;
+				((Gtk.Alignment)Wrapped).Xalign = 1;
 			}
 		}
 		
 		public bool AlignCenter {
 			get {
-				return ((Gtk.Misc)Wrapped).Xalign == 0.5f;
+				return ((Gtk.Alignment)Wrapped).Xalign == 0.5f;
 			}
 			set {
-				((Gtk.Misc)Wrapped).Xalign = 0.5f;
+				((Gtk.Alignment)Wrapped).Xalign = 0.5f;
 			}
 		}
 	}
 }
+

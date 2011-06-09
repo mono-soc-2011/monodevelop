@@ -225,7 +225,7 @@
 		<property name="Ypad" />
 		<property name="Xalign" min="0.0" max="1.0" />
 		<property name="Yalign" min="0.0" max="1.0" />
-		<property name="Alignment"/>
+		<property name="Horizontal"/>
 		<command name="AlignLeft" label="Align Left" icon="gtk-justify-left" />
 		<command name="AlignCenter" label="Align Center" icon="gtk-justify-center" />
 		<command name="AlignRight" label="Align Right" icon="gtk-justify-right" />
@@ -301,7 +301,7 @@
 	</signals>
     </object>
 
-    <object type="Gtk.Alignment,gtk-sharp" base-type="Gtk.Container" label="Alignment" icon="alignment.png" 
+    <object type="Gtk.Alignment,gtk-sharp" base-type="Gtk.Container" wrapper="Stetic.Wrapper.Alignment" label="Alignment" icon="alignment.png" 
     		 init-properties="Xalign Yalign Xscale Yscale" palette-category="container">
 	<itemgroups>
 	    <itemgroup label="Alignment Properties">
@@ -314,6 +314,10 @@
 		<property name="RightPadding" />
 		<property name="BottomPadding" />
 		<property name="BorderWidth" />
+		<property name="Horizontal"/>
+		<command name="AlignLeft" label="Align Left" icon="gtk-justify-left" />
+		<command name="AlignCenter" label="Align Center" icon="gtk-justify-center" />
+		<command name="AlignRight" label="Align Right" icon="gtk-justify-right" />
 	    </itemgroup>
 	</itemgroups>
     </object>
