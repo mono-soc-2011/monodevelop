@@ -392,6 +392,13 @@ namespace Stetic {
 		
 		protected virtual void EmitNotify (string propertyName)
 		{
+			//when widget is shown, Events changed signal is emitted
+			//user cannot change Events in the designer, only through Properties pad
+			//we have to discard notification otherwise designer would be modified
+			if (propertyName == "Events") {
+				return;
+			}
+			
 			if (!Loading) {
 				NotifyChanged ();
 				if (!Loading && Notify != null)
