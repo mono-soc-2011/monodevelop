@@ -388,16 +388,20 @@ namespace Stetic
 			PathEntry entry;
 			
 			if (path != null && RootWidget != null) {
-				Wrapper.Container parent;
+				Wrapper.Container parent = null;
 				if (index > 0) {
 					entry = path [index - 1];
 					parent = (Wrapper.Container) RootWidget.FindChild (entry.Text);
-				} else {
-					parent = RootWidget;
-				}
+				} 
 				string name = path [index].Text;
-				var container = (Gtk.Container)parent.Wrapped;
-				foreach (Gtk.Widget widget in container.Children) {
+				Gtk.Widget[] children = null;
+				if (parent != null) {
+					var container = (Gtk.Container)parent.Wrapped;
+					children = container.Children;
+				} else {
+					children = new Gtk.Widget[] { RootWidget.Wrapped };
+				}
+				foreach (Gtk.Widget widget in children) {
 					var wrapper = (Wrapper.Widget)ObjectWrapper.Lookup (widget);
 					if (wrapper != null) {
 						//widget name could contain underscore
@@ -429,7 +433,9 @@ namespace Stetic
 				noentry.Position = EntryPosition.Left;
 				entries.Add (noentry);
 			}
-			while (widget != RootWidget && widget != null) {				
+//			while (widget != RootWidget && widget != null) {
+			while (widget != null) {				
+			
 				var text = widget.Name;
 				var icon = widget.ClassDescriptor.Icon.ScaleSimple (16, 16, Gdk.InterpType.Bilinear);
 				var entry = new PathEntry (icon, text);
