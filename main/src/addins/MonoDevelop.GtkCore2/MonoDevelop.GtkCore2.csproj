@@ -373,7 +373,9 @@
     <EmbeddedResource Include="Stetic\Wrapper\pixmaps\window.png">
       <LogicalName>window.png</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Stetic\stetic.glade" />
+    <EmbeddedResource Include="Stetic\stetic.glade">
+      <LogicalName>stetic.glade</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Stetic\action.png" />
   </ItemGroup>
   <ItemGroup>
