@@ -168,6 +168,7 @@ namespace Stetic
 			
 			if (plug != null)
 				plug.Destroy ();
+			EditingBackend.UnloadWidget (RootWidget.Name);
 			rootWidget = null;
 			frontend = null;
 			System.Runtime.Remoting.RemotingServices.Disconnect (this);
@@ -320,6 +321,66 @@ namespace Stetic
 			}
 		}
 		
+		
+//		Gtk.Widget CreatePathWidget (int index)
+//		{
+//			Gtk.Menu menu = null;
+//			PathEntry entry;
+//			
+//			if (path != null && RootWidget != null) {
+//				Wrapper.Container parent = null;
+//				if (index >= 0) {
+//					entry = path [index];
+//					parent = RootWidget.FindChild (entry.Text) as Wrapper.Container;
+//				} 
+//				if (parent != null) {
+//					var container = (Gtk.Container)parent.Wrapped;
+//					foreach (Gtk.Widget widget in container.Children) {
+//						var wrapper = (Wrapper.Widget)ObjectWrapper.Lookup (widget);
+//						if (wrapper != null) {
+//							//widget name could contain underscore
+//							//MenuItem constructor strips underscore from label 
+//							//and makes following letter underlined
+//							var mi = new Gtk.ImageMenuItem (string.Empty);
+//							var label = (Gtk.Label) mi.Child;
+//							label.Text = wrapper.Name;
+//							var icon = wrapper.ClassDescriptor.Icon.ScaleSimple (16, 16, Gdk.InterpType.Bilinear);
+//							mi.Image = new Gtk.Image (icon);
+//							if (menu == null) {
+//								menu = new Gtk.Menu ();
+//							}
+//							menu.Add (mi);
+//							mi.Activated += OnMenuItemActivated;
+//							mi.Show ();
+//						}
+//					}
+//				}
+//			}
+//			return menu;	
+//		}
+//		
+//		void CreatePathForWidget (Wrapper.Widget widget) 
+//		{
+//			var entries = new List<PathEntry> ();
+//			if (widget == null) {
+//				var noentry = new PathEntry ("No selection");
+//				noentry.Position = EntryPosition.Left;
+//				entries.Add (noentry);
+//			}
+//			while (widget != RootWidget && widget != null) {				
+//				var text = widget.Name;
+//				var icon = widget.ClassDescriptor.Icon.ScaleSimple (16, 16, Gdk.InterpType.Bilinear);
+//				var entry = new PathEntry (icon, text);
+//				entry.Position = EntryPosition.Left;
+//				entries.Add (entry);
+//				
+//				widget = widget.ParentWrapper;
+//			} 
+//			
+//			entries.Reverse ();
+//			path = entries.ToArray ();	
+//			pathbar.SetPath (path);
+//		}
 		
 		Gtk.Widget CreatePathWidget (int index)
 		{

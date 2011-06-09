@@ -873,6 +873,13 @@ namespace Stetic {
 			return modifiedTopLevels.Contains (topLevel);
 		}
 		
+		public void UnloadWidget (string topLevel)
+		{
+			if (modifiedTopLevels.Contains (topLevel)) {
+				modifiedTopLevels.Remove (topLevel);
+			}
+		}
+		
 		public bool ComponentNeedsCodeGeneration (string topLevel)
 		{
 			return frontend.DesignInfo.ComponentNeedsCodeGeneration (topLevel);
