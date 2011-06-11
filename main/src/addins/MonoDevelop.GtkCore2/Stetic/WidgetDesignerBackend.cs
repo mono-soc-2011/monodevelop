@@ -103,8 +103,11 @@ namespace Stetic
 			}
 
 			preview.SizeAllocated += new Gtk.SizeAllocatedHandler (OnResized);
-
-			AddWithViewport (resizableFixed);
+			
+			Gtk.Viewport viewport = new Gtk.Viewport ();
+			viewport.ShadowType = ShadowType.None;
+			viewport.Add (resizableFixed);
+			Add (viewport);
 			
 			if (wrapper != null)
 				wrapper.AttachDesigner (resizableFixed);
@@ -216,6 +219,9 @@ namespace Stetic
 		ObjectSelection currentObjectSelection;
 		ArrayList topLevels = new ArrayList ();
 		ArrayList trackingSize = new ArrayList ();
+		
+		int oldwidth, oldheight;
+		Cairo.ImageSurface checkers;
 		
 		internal IObjectViewer ObjectViewer;
 		internal bool AllowResize;
@@ -634,38 +640,64 @@ namespace Stetic
 			return base.OnButtonReleaseEvent (ev);
 		}
 		
+		Cairo.ImageSurface GetCheckersImage ()
+		{
+			if (checkers == null || Allocation.Width != oldwidth || Allocation.Height != oldheight) {
+				checkers  = new Cairo.ImageSurface (Cairo.Format.RGB24, Allocation.Width, Allocation.Height);
+				using (Cairo.Context g = new Cairo.Context (checkers)) {
+					int size = 8;
+					bool squareColor = true;
+					bool startsquareColor = true;
+					double x1 = 0;
+					double x2 = Allocation.Width;
+					double y1 = 0;
+					double y2 = Allocation.Height;
+					Cairo.Color light = new Cairo.Color (0.9, 0.9, 0.9);
+					Cairo.Color dark = new Cairo.Color (0.5, 0.5, 0.5);
+					Gdk.Rectangle rect = child.Allocation;
+					for (double y = y1; y < y2; y += size) {
+						squareColor = startsquareColor;
+						startsquareColor = !startsquareColor;
+						for (double x = x1; x < x2; x += size) {
+							g.Rectangle (x, y, size, size);
+							g.Color = squareColor ? light : dark;
+							g.Fill ();
+							squareColor = !squareColor;
+						}
+					}
+					oldwidth = Allocation.Width;
+					oldheight = Allocation.Height;
+				}
+			}
+			return checkers;
+		}
+		
 		protected override bool OnExposeEvent (Gdk.EventExpose ev)
 		{
 			bool r = base.OnExposeEvent (ev);
-			//FIXME Disabled checkerboard background because it's very inefficient and makes the control *very* slow to resize
+			// FIXME Disabled checkerboard background because it's very inefficient and makes the control *very* slow to resize
 			// It should take the EventExpose area into account, invalidate more selectively during resizes (GTK viewport 
 			// code would probably be a good start), and take advantage of the flat block color the parent is rendering.
-			/*
-			int size = 8;
-			bool squareColor = true;
-			bool startsquareColor = true;
-			int x1 = 0;
-			int x2 = Allocation.Width;
-			int y1 = 0;
-			int y2 = Allocation.Height;
-			for (int y = y1; y < y2; y += size) {
-				squareColor = startsquareColor;
-				startsquareColor = !startsquareColor;
-				for (int x = x1; x < x2; x += size) {
-					GdkWindow.DrawRectangle (squareColor ? Style.DarkGC (StateType.Normal) : Style.DarkGC (StateType.Active), true, x, y, size, size);
-					squareColor = !squareColor;
-				}
+			
+			using (Cairo.Context g = Gdk.CairoHelper.Create (this.GdkWindow)) {
+				g.Save ();
+			
+				Cairo.Surface image = GetCheckersImage ();
+				g.SetSourceSurface (image, 0, 0);
+				g.Rectangle (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height );
+				g.Clip ();
+				g.Paint ();
+				
+				g.Restore ();
 			}
-
-			foreach (Widget cw in Children)
-				PropagateExpose (cw, ev);*/
-
+			
 			Gdk.Rectangle rect = child.Allocation;
 			if (Stetic.Metacity.Preview.ThemeError) 
 				GdkWindow.DrawRectangle (this.Style.BackgroundGC (StateType.Normal), true, rect.X, rect.Y, rect.Width, rect.Height);
 			
 			Pixbuf sh = Shadow.AddShadow (rect.Width, rect.Height);
 			GdkWindow.DrawPixbuf (this.Style.BackgroundGC (StateType.Normal), sh, 0, 0, rect.X - 5, rect.Y - 5, sh.Width, sh.Height, RgbDither.None, 0, 0); 
+			
 			return r;
 		}
 		

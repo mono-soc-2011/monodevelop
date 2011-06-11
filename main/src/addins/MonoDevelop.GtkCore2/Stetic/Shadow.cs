@@ -13,7 +13,7 @@ class Shadow
 {
 	public const int BLUR_RADIUS = 5;
 	public const int SHADOW_OFFSET = (BLUR_RADIUS * 4 / 5);
-	public const double SHADOW_OPACITY = 0.5;
+	public const double SHADOW_OPACITY = 1;
 
 	static ConvFilter filter;
 	
