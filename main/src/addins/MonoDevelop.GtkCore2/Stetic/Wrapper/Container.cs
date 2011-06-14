@@ -370,7 +370,12 @@ namespace Stetic.Wrapper
 				Gtk.Widget child = (Gtk.Widget)wrapper.Wrapped;
 
 				AutoSize[child] = false;
-				container.Add (child);
+				if (container is Gtk.ScrolledWindow && 
+					child.GetType ().GetEvent ("ScrollAdjustmentSet") == null) {
+					((Gtk.ScrolledWindow)container).AddWithViewport (child);
+				} else {
+					container.Add (child);
+				}
 				
 				childwrapper = ChildWrapper ((Widget)wrapper);
 				if (childwrapper != null)
