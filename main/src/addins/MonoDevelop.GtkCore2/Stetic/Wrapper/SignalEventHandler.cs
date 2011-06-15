@@ -5,15 +5,15 @@ namespace Stetic
 	
 	public class SignalEventArgs: ObjectWrapperEventArgs
 	{
-		Signal signal;
-		
 		public SignalEventArgs (ObjectWrapper wrapper, Signal signal): base (wrapper)
 		{
-			this.signal = signal;
+			Signal = signal;
+			FrontendNotfied = false;
 		}
+	
+		public Signal Signal { get; private set; }
 		
-		public Signal Signal {
-			get { return signal; }
-		}
+		//flag determines if signal was handled and should not be propagate further
+		public bool FrontendNotfied { get; set; }
 	}
 }

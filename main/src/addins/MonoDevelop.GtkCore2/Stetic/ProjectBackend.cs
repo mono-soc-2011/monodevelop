@@ -944,8 +944,10 @@ namespace Stetic {
 		{
 			if (loading)
 				return;
-			if (frontend != null)
+			if (frontend != null) {
 				frontend.NotifySignalAdded (Component.GetSafeReference (args.Wrapper), null, args.Signal);
+				args.FrontendNotfied = true;
+			}
 			OnSignalAdded (args);
 		}
 		
@@ -953,8 +955,10 @@ namespace Stetic {
 		{
 			if (loading)
 				return;
-			if (frontend != null)
+			if (frontend != null) {
 				frontend.NotifySignalRemoved (Component.GetSafeReference (args.Wrapper), null, args.Signal);
+				args.FrontendNotfied = true;
+			}
 			OnSignalRemoved (args);
 		}
 		

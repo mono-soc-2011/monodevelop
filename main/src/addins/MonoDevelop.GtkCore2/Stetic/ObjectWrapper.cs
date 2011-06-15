@@ -224,6 +224,7 @@ namespace Stetic {
 				return wrapper;
 			}
 			catch (Exception ex) {
+				Console.WriteLine ("Cannot read [{0}]", elem.GetAttribute ("id"));
 				Console.WriteLine (ex);
 				ErrorWidget we = new ErrorWidget (ex, elem.GetAttribute ("id"));
 				ErrorWidgetWrapper wrap = (ErrorWidgetWrapper) Create (reader.Project, we, null);
@@ -410,8 +411,9 @@ namespace Stetic {
 		{
 			OnObjectChanged (args);
 			if (!Loading) {
-				if (proj != null)
+				if (proj != null && !args.FrontendNotfied) {
 					proj.NotifySignalAdded (args);
+				}
 				if (SignalAdded != null)
 					SignalAdded (this, args);
 			}
@@ -421,8 +423,9 @@ namespace Stetic {
 		{
 			OnObjectChanged (args);
 			if (!Loading) {
-				if (proj != null)
+				if (proj != null && !args.FrontendNotfied) {
 					proj.NotifySignalRemoved (args);
+				}
 				if (SignalRemoved != null)
 					SignalRemoved (this, args);
 			}
@@ -432,8 +435,9 @@ namespace Stetic {
 		{
 			OnObjectChanged (args);
 			if (!Loading) {
-				if (proj != null)
+				if (proj != null && !args.FrontendNotfied) {
 					proj.NotifySignalChanged (args);
+				}
 				if (SignalChanged != null)
 					SignalChanged (this, args);
 			}
