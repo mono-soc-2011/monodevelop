@@ -653,7 +653,7 @@ namespace Stetic
 					double y1 = 0;
 					double y2 = Allocation.Height;
 					Cairo.Color light = new Cairo.Color (0.9, 0.9, 0.9);
-					Cairo.Color dark = new Cairo.Color (0.5, 0.5, 0.5);
+					Cairo.Color dark = new Cairo.Color (0.4, 0.4, 0.4);
 					Gdk.Rectangle rect = child.Allocation;
 					for (double y = y1; y < y2; y += size) {
 						squareColor = startsquareColor;
@@ -686,8 +686,10 @@ namespace Stetic
 				g.SetSourceSurface (image, 0, 0);
 				g.Rectangle (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height );
 				g.Clip ();
-				g.Paint ();
-				
+				Cairo.Gradient pattern = new Cairo.LinearGradient (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height);
+				pattern.AddColorStop (0, new Cairo.Color (0, 0, 0, 0.3));
+				pattern.AddColorStop (1, new Cairo.Color (0, 0, 0, 1));
+				g.Mask (pattern);
 				g.Restore ();
 			}
 			
