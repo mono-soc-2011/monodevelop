@@ -983,12 +983,9 @@ namespace Stetic {
 				frontend.NotifyWidgetNameChanged (Component.GetSafeReference (args.WidgetWrapper), args.OldName, args.NewName, isTopLevel);
 			if (args.WidgetWrapper != null && WidgetNameChanged != null)
 				WidgetNameChanged (this, args);
-			
-			if (modifiedTopLevels.Contains (args.OldName))
-				modifiedTopLevels.Remove (args.OldName);
-			
-			if (!modifiedTopLevels.Contains (args.NewName))
-				modifiedTopLevels.Add (args.NewName);
+	
+			string rootWidgetName = args.WidgetWrapper.RootWrapperName;
+			NotifyChanged (rootWidgetName);
 		}
 		
 		void OnSignalAdded (object sender, SignalEventArgs args)
