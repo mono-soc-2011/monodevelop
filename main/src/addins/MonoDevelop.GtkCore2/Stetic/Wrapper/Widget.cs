@@ -797,42 +797,75 @@ namespace Stetic.Wrapper {
 			}
 		}
 		
-		internal void InsertIntoAlignment ()
+		internal void InsertInto ()
+		{
+			Gtk.Menu menu = new Gtk.Menu ();
+			string [] types = {
+				"Gtk.Alignment",
+				"Gtk.EventBox",
+//				"Gtk.Frame",
+				"Gtk.HBox",
+				"Gtk.VBox",
+				"Gtk.Table"
+			};
+			
+			foreach (var typeName in types) {
+				ClassDescriptor klass = Registry.LookupClassByName (typeName);
+				if (klass != null) {
+					Gdk.Pixbuf icon = klass.Icon.ScaleSimple (16, 16, Gdk.InterpType.Bilinear);
+					var mi = new Gtk.ImageMenuItem (string.Empty);
+					var label = (Gtk.Label) mi.Child;
+					label.Text = klass.Label;
+					mi.Image = new Gtk.Image (icon);
+					mi.Activated += delegate(object sender, EventArgs e) {
+						InsertIntoContainer (klass.Name);
+					};
+					menu.Add (mi);
+				}
+			}
+			
+			menu.ShowAll ();
+			menu.Popup ();
+		}
+		
+		void InsertIntoContainer (string containerName)
 		{
 			Wrapper.Container parent = (Wrapper.Container)ParentWrapper;
-			string className = "Gtk.Alignment";
+			string className = containerName;
 			ClassDescriptor cls = Registry.LookupClassByName (className);
-			Gtk.Alignment align = (Gtk.Alignment)cls.NewInstance (Project);
-			parent.PasteChild (Wrapped, align);
+			Gtk.Container cont = (Gtk.Container)cls.NewInstance (Project);
+			parent.PasteChild (Wrapped, cont, false);
 			
-			Wrapper.Container container = (Wrapper.Container)ObjectWrapper.Lookup (align);
-			Placeholder placeholder = (Placeholder)align.Child;
+			Wrapper.Container container = (Wrapper.Container)ObjectWrapper.Lookup (cont);
+			int index = cont is Gtk.Table ? cont.Children.Length - 1 : 0;
+			Placeholder placeholder = (Placeholder)cont.Children [index];
 			//After PasteChild. this wrapper cannot be looked up, DropObject will fail
 			Wrap (Wrapped, false);
 			container.DropObject (placeholder.UndoId, Wrapped);
 		}
 		
-		internal void RemoveFromAlignment ()
+		internal void RemoveFrom ()
 		{
 			Wrapper.Container parent = (Wrapper.Container)ParentWrapper;
-			Gtk.Alignment align = (Gtk.Alignment) parent.Wrapped;
+			Gtk.Container cont = (Gtk.Container) parent.Wrapped;
 			Wrapper.Container parentalign = (Wrapper.Container)parent.ParentWrapper;
 			
-			align.Remove (Wrapped);
+			cont.Remove (Wrapped);
 			//To trigger SelectionChanged event after PasteChild needed for WidgetActionBar update
 			parentalign.Select ();
-			parentalign.PasteChild (align, Wrapped);
+			parentalign.PasteChild (cont, Wrapped);
 		}
 		
-		public bool CheckInsertIntoAlignment ()
+		public bool CheckInsertInto()
 		{
 			bool check = !(Wrapped.Parent is Gtk.Alignment) && !(Wrapped is Gtk.Alignment);
 			return check;
 		}
 		
-		public bool CheckRemoveFromAlignment ()
+		public bool CheckRemoveFrom()
 		{
-			bool check = (Wrapped.Parent is Gtk.Alignment) && !(Wrapped is Gtk.Alignment);
+			bool check = ((Wrapped.Parent is Gtk.Alignment) && !(Wrapped is Gtk.Alignment)) ||
+						 ((Wrapped.Parent is Gtk.EventBox) && !(Wrapped is Gtk.EventBox) && Wrapped.Parent.Name != RootWrapperName);
 			return check;
 		}
 		

@@ -370,12 +370,13 @@ namespace Stetic.Wrapper
 				Gtk.Widget child = (Gtk.Widget)wrapper.Wrapped;
 
 				AutoSize[child] = false;
-				if (container is Gtk.ScrolledWindow && 
-					child.GetType ().GetEvent ("ScrollAdjustmentSet") == null) {
-					((Gtk.ScrolledWindow)container).AddWithViewport (child);
-				} else {
+//				if (container is Gtk.ScrolledWindow && 
+//					child.GetType ().GetEvent ("ScrollAdjustmentSet") == null) {
+//					((Gtk.ScrolledWindow)container).AddWithViewport (child);
+//				} else {
+//					container.Add (child);
+//				}
 					container.Add (child);
-				}
 				
 				childwrapper = ChildWrapper ((Widget)wrapper);
 				if (childwrapper != null)
@@ -960,10 +961,15 @@ namespace Stetic.Wrapper
 		
 		public void PasteChild (Gtk.Widget oldChild, Gtk.Widget newChild)
 		{
+			PasteChild (oldChild, newChild, true);
+		}
+		
+		public void PasteChild (Gtk.Widget oldChild, Gtk.Widget newChild, bool destroyOld)
+		{
 			using (UndoManager.AtomicChange) {
 				Widget w = Widget.Lookup (newChild);
 				w.RequiresUndoStatusUpdate = true;
-				ReplaceChild (oldChild, newChild, true);
+				ReplaceChild (oldChild, newChild, destroyOld);
 			}
 		}
 
