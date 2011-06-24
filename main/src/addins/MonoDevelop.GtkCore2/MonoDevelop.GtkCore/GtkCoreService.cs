@@ -5,6 +5,7 @@
 //   Lluis Sanchez Gual, Krzysztof Marecki
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Krzysztof Marecki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,23 +55,29 @@ namespace MonoDevelop.GtkCore
 		
 		void ConvertSolution (Solution solution)
 		{
-			foreach (Project project in solution.GetAllProjects ())
-			{
+			var infos = new List<GtkDesignInfo> ();
+			foreach (Project project in solution.GetAllProjects ()) {
 				GtkDesignInfo info = GtkDesignInfo.FromProject (project);
-				
 				if (info.NeedsConversion) {
-					ProjectConversionDialog dialog = new ProjectConversionDialog (project, info.SteticFolderName);
-					
-					try
-					{
-						if (dialog.Run () == (int)ResponseType.Yes) {
-							info.GuiBuilderProject.Convert (dialog.GuiFolderName, dialog.MakeBackup);
-							IdeApp.ProjectOperations.Save (project);
-						}
-					} finally {
-						dialog.Destroy ();
-					}
+					infos.Add (info);
 				}
+			}
+			
+			if (infos.Count == 0) {
+				return;
+			}
+			
+			var dialog = new ProjectConversionDialog(infos, "Designer", solution.Name);
+			dialog.ConversionMethod =  delegate(MonoDevelop.GtkCore.GtkDesignInfo info) {
+				Project project = info.GuiBuilderProject.Project;
+				info.GuiBuilderProject.Convert (dialog.GuiFolderName, dialog.MakeBackup);
+				IdeApp.ProjectOperations.Save (project);
+			};
+			try {
+				MessageService.RunCustomDialog (dialog);
+			}
+			finally {
+				dialog.Destroy ();
 			}
 		}
 		
