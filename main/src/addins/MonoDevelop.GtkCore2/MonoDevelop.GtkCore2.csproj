@@ -104,6 +104,7 @@
     <None Include="MonoDevelop.GtkCore2.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="addin-project.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="templates\Dialog.xft.xml">
@@ -376,7 +377,9 @@
     <EmbeddedResource Include="Stetic\stetic.glade">
       <LogicalName>stetic.glade</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Stetic\action.png" />
+    <EmbeddedResource Include="Stetic\action.png">
+      <LogicalName>action.png</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MonoDevelop.GtkCore.GuiBuilder\ClassUtils.cs" />
@@ -646,6 +649,7 @@
     <Compile Include="Stetic\Metacity\Theme.cs" />
     <Compile Include="Stetic\Windows\Preview.cs" />
     <Compile Include="Stetic\Windows\WindowsTheme.cs" />
+    <Compile Include="Stetic\Wrapper\Alignment.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Mono.Addins.targets" />
