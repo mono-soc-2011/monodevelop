@@ -11,12 +11,20 @@ namespace MonoDevelop.GtkCore.Dialogs
 		private global::Gtk.Label labelProject;
 		private global::Gtk.Label labelInfo;
 		private global::Gtk.HSeparator hseparator1;
-		private global::Gtk.HBox hbox1;
-		private global::Gtk.Label labelFolder;
-		private global::Gtk.Entry entryFolder;
+		private global::Gtk.Notebook notebook;
+		private global::Gtk.Table tableParameters;
 		private global::Gtk.CheckButton checkBackup;
+		private global::Gtk.Entry entryFolder;
+		private global::Gtk.Label labelBackup;
+		private global::Gtk.Label labelFolder;
+		private global::Gtk.Label labelParametersTab;
+		private global::Gtk.VBox vboxProgress;
+		private global::Gtk.Label labelProgress;
+		private global::Gtk.ProgressBar progressbar;
+		private global::Gtk.Label labelProgressTab;
 		private global::Gtk.Button buttonConvert;
-
+		private global::Gtk.Button buttonDone;
+        
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);
@@ -35,7 +43,7 @@ namespace MonoDevelop.GtkCore.Dialogs
 			this.hbox.Name = "hbox";
 			this.hbox.Spacing = 6;
 			// Container child hbox.Gtk.Box+BoxChild
-			this.alignmentLogo = new global::Gtk.Alignment (1F, 0.15F, 1F, 0F);
+			this.alignmentLogo = new global::Gtk.Alignment (1F, 0.5F, 1F, 0F);
 			this.alignmentLogo.Name = "alignmentLogo";
 			// Container child alignmentLogo.Gtk.Container+ContainerChild
 			this.imageLogo = new global::Gtk.Image ();
@@ -56,7 +64,7 @@ namespace MonoDevelop.GtkCore.Dialogs
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.labelProject = new global::Gtk.Label ();
 			this.labelProject.Name = "labelProject";
-			this.labelProject.LabelProp = global::Mono.Unix.Catalog.GetString ("<b><big>GTK# Project Conversion</big></b>");
+			this.labelProject.LabelProp = global::Mono.Unix.Catalog.GetString ("<b><big>GTK# Solution Conversion</big></b>");
 			this.labelProject.UseMarkup = true;
 			this.vbox2.Add (this.labelProject);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.labelProject]));
@@ -68,7 +76,7 @@ namespace MonoDevelop.GtkCore.Dialogs
 			this.labelInfo.Name = "labelInfo";
 			this.labelInfo.Xalign = 0F;
 			this.labelInfo.Yalign = 0F;
-			this.labelInfo.LabelProp = global::Mono.Unix.Catalog.GetString ("This project has been created in the previous\nversion of GTK# addin and must be converted. \n\n<b>Following changes will be made :</b>\n\t- split gui.stetic into separate .gtkx files\n\t- split generated.cs into separate helper classes\n\t- remove gtk-gui folder.\n\t- create a designer folder for stock icons\n\t  and generated helper classes.");
+			this.labelInfo.LabelProp = global::Mono.Unix.Catalog.GetString ("This solution has been created in the previous\nversion of GTK# addin and must be converted. \n\nThe following changes will be made\nfor each project in the solution:\n\n\t- split gui.stetic into separate .gtkx files\n\t- split generated.cs into separate helper classes\n\t- remove gtk-gui folder.\n\t- create a designer folder for stock icons\n\t  and generated designer helper classes.");
 			this.labelInfo.UseMarkup = true;
 			this.labelInfo.Wrap = true;
 			this.vbox2.Add (this.labelInfo);
@@ -76,70 +84,130 @@ namespace MonoDevelop.GtkCore.Dialogs
 			w5.Position = 1;
 			w5.Expand = false;
 			w5.Fill = false;
-			// Container child vbox2.Gtk.Box+BoxChild
-			this.hseparator1 = new global::Gtk.HSeparator ();
-			this.hseparator1.Name = "hseparator1";
-			this.vbox2.Add (this.hseparator1);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hseparator1]));
-			w6.Position = 2;
+			this.hbox.Add (this.vbox2);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox [this.vbox2]));
+			w6.Position = 1;
 			w6.Expand = false;
 			w6.Fill = false;
-			// Container child vbox2.Gtk.Box+BoxChild
-			this.hbox1 = new global::Gtk.HBox ();
-			this.hbox1.Name = "hbox1";
-			this.hbox1.Spacing = 6;
-			// Container child hbox1.Gtk.Box+BoxChild
-			this.labelFolder = new global::Gtk.Label ();
-			this.labelFolder.Name = "labelFolder";
-			this.labelFolder.LabelProp = global::Mono.Unix.Catalog.GetString ("Designer folder name:");
-			this.hbox1.Add (this.labelFolder);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.labelFolder]));
+			w1.Add (this.hbox);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(w1 [this.hbox]));
 			w7.Position = 0;
 			w7.Expand = false;
 			w7.Fill = false;
-			// Container child hbox1.Gtk.Box+BoxChild
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.hseparator1 = new global::Gtk.HSeparator ();
+			this.hseparator1.HeightRequest = 30;
+			this.hseparator1.Name = "hseparator1";
+			w1.Add (this.hseparator1);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(w1 [this.hseparator1]));
+			w8.Position = 1;
+			w8.Expand = false;
+			w8.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.notebook = new global::Gtk.Notebook ();
+			this.notebook.CanFocus = true;
+			this.notebook.Name = "notebook";
+			this.notebook.CurrentPage = 1;
+			// Container child notebook.Gtk.Notebook+NotebookChild
+			this.tableParameters = new global::Gtk.Table (((uint)(2)), ((uint)(2)), false);
+			this.tableParameters.Name = "tableParameters";
+			this.tableParameters.RowSpacing = ((uint)(6));
+			this.tableParameters.ColumnSpacing = ((uint)(6));
+			// Container child tableParameters.Gtk.Table+TableChild
+			this.checkBackup = new global::Gtk.CheckButton ();
+			this.checkBackup.CanFocus = true;
+			this.checkBackup.Name = "checkBackup";
+			this.checkBackup.Label = "";
+			this.checkBackup.Active = true;
+			this.checkBackup.DrawIndicator = true;
+			this.checkBackup.UseUnderline = true;
+			this.tableParameters.Add (this.checkBackup);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.tableParameters [this.checkBackup]));
+			w9.TopAttach = ((uint)(1));
+			w9.BottomAttach = ((uint)(2));
+			w9.LeftAttach = ((uint)(1));
+			w9.RightAttach = ((uint)(2));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child tableParameters.Gtk.Table+TableChild
 			this.entryFolder = new global::Gtk.Entry ();
 			this.entryFolder.CanFocus = true;
 			this.entryFolder.Name = "entryFolder";
 			this.entryFolder.IsEditable = true;
 			this.entryFolder.InvisibleChar = '●';
-			this.hbox1.Add (this.entryFolder);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.entryFolder]));
-			w8.Position = 1;
-			this.vbox2.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox1]));
-			w9.Position = 3;
-			w9.Expand = false;
-			w9.Fill = false;
-			// Container child vbox2.Gtk.Box+BoxChild
-			this.checkBackup = new global::Gtk.CheckButton ();
-			this.checkBackup.CanFocus = true;
-			this.checkBackup.Name = "checkBackup";
-			this.checkBackup.Label = global::Mono.Unix.Catalog.GetString ("Make a backup before converting");
-			this.checkBackup.Active = true;
-			this.checkBackup.DrawIndicator = true;
-			this.checkBackup.UseUnderline = true;
-			this.vbox2.Add (this.checkBackup);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.checkBackup]));
-			w10.Position = 4;
-			w10.Expand = false;
-			w10.Fill = false;
-			this.hbox.Add (this.vbox2);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox [this.vbox2]));
-			w11.Position = 1;
-			w11.Expand = false;
-			w11.Fill = false;
-			w1.Add (this.hbox);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(w1 [this.hbox]));
-			w12.Position = 0;
-			w12.Expand = false;
-			w12.Fill = false;
+			this.tableParameters.Add (this.entryFolder);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.tableParameters [this.entryFolder]));
+			w10.LeftAttach = ((uint)(1));
+			w10.RightAttach = ((uint)(2));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child tableParameters.Gtk.Table+TableChild
+			this.labelBackup = new global::Gtk.Label ();
+			this.labelBackup.Name = "labelBackup";
+			this.labelBackup.Xalign = 1F;
+			this.labelBackup.LabelProp = global::Mono.Unix.Catalog.GetString ("Make a backup before conversion :");
+			this.tableParameters.Add (this.labelBackup);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.tableParameters [this.labelBackup]));
+			w11.TopAttach = ((uint)(1));
+			w11.BottomAttach = ((uint)(2));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child tableParameters.Gtk.Table+TableChild
+			this.labelFolder = new global::Gtk.Label ();
+			this.labelFolder.Name = "labelFolder";
+			this.labelFolder.Xalign = 0F;
+			this.labelFolder.LabelProp = global::Mono.Unix.Catalog.GetString ("Designer folder name:");
+			this.tableParameters.Add (this.labelFolder);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.tableParameters [this.labelFolder]));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.notebook.Add (this.tableParameters);
+			// Notebook tab
+			this.labelParametersTab = new global::Gtk.Label ();
+			this.labelParametersTab.Name = "labelParametersTab";
+			this.labelParametersTab.LabelProp = global::Mono.Unix.Catalog.GetString ("Parameters");
+			this.notebook.SetTabLabel (this.tableParameters, this.labelParametersTab);
+			this.labelParametersTab.ShowAll ();
+			// Container child notebook.Gtk.Notebook+NotebookChild
+			this.vboxProgress = new global::Gtk.VBox ();
+			this.vboxProgress.Name = "vboxProgress";
+			this.vboxProgress.Spacing = 6;
+			// Container child vboxProgress.Gtk.Box+BoxChild
+			this.labelProgress = new global::Gtk.Label ();
+			this.labelProgress.Name = "labelProgress";
+			this.labelProgress.Xalign = 0F;
+			this.labelProgress.LabelProp = global::Mono.Unix.Catalog.GetString ("Not converted");
+			this.vboxProgress.Add (this.labelProgress);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vboxProgress [this.labelProgress]));
+			w14.Position = 0;
+			w14.Expand = false;
+			w14.Fill = false;
+			// Container child vboxProgress.Gtk.Box+BoxChild
+			this.progressbar = new global::Gtk.ProgressBar ();
+			this.progressbar.Name = "progressbar";
+			this.vboxProgress.Add (this.progressbar);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vboxProgress [this.progressbar]));
+			w15.Position = 1;
+			w15.Expand = false;
+			w15.Fill = false;
+			this.notebook.Add (this.vboxProgress);
+			global::Gtk.Notebook.NotebookChild w16 = ((global::Gtk.Notebook.NotebookChild)(this.notebook [this.vboxProgress]));
+			w16.Position = 1;
+			// Notebook tab
+			this.labelProgressTab = new global::Gtk.Label ();
+			this.labelProgressTab.Name = "labelProgressTab";
+			this.labelProgressTab.LabelProp = global::Mono.Unix.Catalog.GetString ("Progress");
+			this.notebook.SetTabLabel (this.vboxProgress, this.labelProgressTab);
+			this.labelProgressTab.ShowAll ();
+			w1.Add (this.notebook);
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(w1 [this.notebook]));
+			w17.Position = 2;
+			w17.Expand = false;
+			w17.Fill = false;
 			// Internal child MonoDevelop.GtkCore.Dialogs.ProjectConversionDialog.ActionArea
-			global::Gtk.HButtonBox w13 = this.ActionArea;
-			w13.Name = "dialog1_ActionArea";
-			w13.Spacing = 10;
-			w13.BorderWidth = ((uint)(5));
-			w13.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
+			global::Gtk.HButtonBox w18 = this.ActionArea;
+			w18.Name = "dialog1_ActionArea";
+			w18.Spacing = 10;
+			w18.BorderWidth = ((uint)(5));
+			w18.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonConvert = new global::Gtk.Button ();
 			this.buttonConvert.CanDefault = true;
@@ -147,15 +215,27 @@ namespace MonoDevelop.GtkCore.Dialogs
 			this.buttonConvert.Name = "buttonConvert";
 			this.buttonConvert.UseUnderline = true;
 			this.buttonConvert.Label = global::Mono.Unix.Catalog.GetString ("_Convert");
-			this.AddActionWidget (this.buttonConvert, -5);
-			global::Gtk.ButtonBox.ButtonBoxChild w14 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w13 [this.buttonConvert]));
-			w14.Expand = false;
-			w14.Fill = false;
+			w18.Add (this.buttonConvert);
+			global::Gtk.ButtonBox.ButtonBoxChild w19 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w18 [this.buttonConvert]));
+			w19.Expand = false;
+			w19.Fill = false;
+			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
+			this.buttonDone = new global::Gtk.Button ();
+			this.buttonDone.CanFocus = true;
+			this.buttonDone.Name = "buttonDone";
+			this.buttonDone.UseUnderline = true;
+			this.buttonDone.Label = global::Mono.Unix.Catalog.GetString ("_Done");
+			this.AddActionWidget (this.buttonDone, -5);
+			global::Gtk.ButtonBox.ButtonBoxChild w20 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w18 [this.buttonDone]));
+			w20.Position = 1;
+			w20.Expand = false;
+			w20.Fill = false;
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 532;
-			this.DefaultHeight = 308;
+			this.DefaultWidth = 516;
+			this.DefaultHeight = 363;
+			this.buttonDone.Hide ();
 			this.Show ();
 		}
 	}

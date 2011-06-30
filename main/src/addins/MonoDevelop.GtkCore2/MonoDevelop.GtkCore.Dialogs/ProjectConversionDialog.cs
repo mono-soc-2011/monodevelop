@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gtk;
 
+using MonoDevelop.Core;
 using MonoDevelop.Projects;
 
 namespace MonoDevelop.GtkCore.Dialogs
@@ -48,17 +49,23 @@ namespace MonoDevelop.GtkCore.Dialogs
 			progressbar.Adjustment.Upper = infos.Count;
 			progressbar.Adjustment.StepIncrement = 1;
 			
+			buttonConvert.Visible = false;
+			buttonDone.Visible = true;
+			buttonDone.Sensitive = false;
+			
 			foreach (GtkDesignInfo info in infos) {
 				Project project = info.GuiBuilderProject.Project;
 				var adjustment = progressbar.Adjustment;
-				labelProgress.Text = string.Format (@"Converting {0} {1:N0}\{2}",
+				labelProgress.Text =  GettextCatalog.GetString (@"Converting {0} {1:N0}\{2}",
 					project.Name, adjustment.Value + 1, infos.Count);
 				ConversionMethod (info);
 				adjustment.Value += adjustment.StepIncrement;
 				adjustment.ChangeValue ();
 				
 			}
-			Respond (ResponseType.Yes);
+			
+			labelProgress.Text = GettextCatalog.GetString ("Finished");
+			buttonDone.Sensitive = true;
 		}
 	}
 }
