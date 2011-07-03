@@ -49,6 +49,10 @@
     <Type class="MonoDevelop.Debugger.Visualizer.ImageVisualizer" />
     <Type class="MonoDevelop.Debugger.Visualizer.GdkColorVisualizer" />
     <Type class="MonoDevelop.Debugger.Visualizer.ColorVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.DictionaryVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.ListVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.ListIntVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.ExceptionVisualizer" />
   </Extension>
 	
 	<Extension path = "/MonoDevelop/Ide/StartupHandlers">
