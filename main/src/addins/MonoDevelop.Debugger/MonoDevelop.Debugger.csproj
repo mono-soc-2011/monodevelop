@@ -49,6 +49,7 @@
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Mono.Posix" />
@@ -87,9 +88,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\ArrayListVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ColorVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\ExceptionVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\GdkColorVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ImageVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\ListIntVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\ListVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger\StackTracePad.cs" />
     <Compile Include="MonoDevelop.Debugger\ObjectValueTreeView.cs" />
     <Compile Include="MonoDevelop.Debugger\WatchPad.cs" />
