@@ -3,6 +3,7 @@
 //
 // Author:
 //   Lluis Sanchez Gual
+//	 Krzysztof Marecki
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -645,7 +646,7 @@ namespace Stetic
 			if (checkers == null || Allocation.Width != oldwidth || Allocation.Height != oldheight) {
 				checkers  = new Cairo.ImageSurface (Cairo.Format.RGB24, Allocation.Width, Allocation.Height);
 				using (Cairo.Context g = new Cairo.Context (checkers)) {
-					int size = 8;
+					int size = 12;
 					bool squareColor = true;
 					bool startsquareColor = true;
 					double x1 = 0;
@@ -653,8 +654,7 @@ namespace Stetic
 					double y1 = 0;
 					double y2 = Allocation.Height;
 					Cairo.Color light = new Cairo.Color (0.9, 0.9, 0.9);
-					Cairo.Color dark = new Cairo.Color (0.4, 0.4, 0.4);
-					Gdk.Rectangle rect = child.Allocation;
+					Cairo.Color dark = new Cairo.Color (0.5, 0.5, 0.5);
 					for (double y = y1; y < y2; y += size) {
 						squareColor = startsquareColor;
 						startsquareColor = !startsquareColor;
@@ -687,7 +687,7 @@ namespace Stetic
 				g.Rectangle (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height );
 				g.Clip ();
 				Cairo.Gradient pattern = new Cairo.LinearGradient (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height);
-				pattern.AddColorStop (0, new Cairo.Color (0, 0, 0, 0.3));
+				pattern.AddColorStop (0, new Cairo.Color (0, 0, 0, 0.2));
 				pattern.AddColorStop (1, new Cairo.Color (0, 0, 0, 1));
 				g.Mask (pattern);
 				g.Restore ();
@@ -744,22 +744,23 @@ namespace Stetic
 	
 	class SelectionHandleBox
 	{
-		const int selectionHandleSize = 4;
-		const int topSelectionHandleSize = 8;
+		const int selectionHandleSize = 10;
+		const int topSelectionHandleSize = 10;
 		public const int selectionLineWidth = 2;
 		
-		ArrayList selection = new ArrayList ();
+		public ArrayList selection = new ArrayList ();
 		Gdk.Rectangle allocation;
 		SelectionHandlePart dragHandlePart;
 		public ObjectSelection ObjectSelection;
+		uint? tag;
 		
 		public SelectionHandleBox (Gtk.Widget parent)
 		{
 			// Lines
-			selection.Add (new SelectionHandlePart (BoxFill.HLine, BoxPos.Start, BoxPos.Start, 0, -selectionLineWidth, BoxPos.End, BoxPos.Start, 0, 0));
-			selection.Add (new SelectionHandlePart (BoxFill.HLine, BoxPos.Start, BoxPos.End, 0, 0, BoxPos.End, BoxPos.End, 0, selectionLineWidth));
-			selection.Add (new SelectionHandlePart (BoxFill.VLine, BoxPos.Start, BoxPos.Start, -selectionLineWidth, 0, BoxPos.Start, BoxPos.End, 0, 0));
-			selection.Add (new SelectionHandlePart (BoxFill.VLine, BoxPos.End, BoxPos.Start, 0, 0, BoxPos.End, BoxPos.End, selectionLineWidth, 0));
+			selection.Add (new SelectionHandlePart (BoxFill.HLine, BoxPos.Start, BoxPos.Start, 0, -selectionLineWidth, BoxPos.End, BoxPos.Start, 0, 0, -1));
+			selection.Add (new SelectionHandlePart (BoxFill.HLine, BoxPos.Start, BoxPos.End, 0, 0, BoxPos.End, BoxPos.End, 0, selectionLineWidth, 1));
+			selection.Add (new SelectionHandlePart (BoxFill.VLine, BoxPos.Start, BoxPos.Start, -selectionLineWidth, 0, BoxPos.Start, BoxPos.End, 0, 0, 1));
+			selection.Add (new SelectionHandlePart (BoxFill.VLine, BoxPos.End, BoxPos.Start, 0, 0, BoxPos.End, BoxPos.End, selectionLineWidth, 0, -1));
 			
 			// Handles
 			selection.Add (new SelectionHandlePart (BoxFill.Box, BoxPos.Start, BoxPos.Start, -selectionHandleSize, -selectionHandleSize, BoxPos.Start, BoxPos.Start, 0, 0));
@@ -786,12 +787,32 @@ namespace Stetic
 			foreach (Gtk.Widget s in selection)
 				s.Show ();
 			dragHandlePart.Visible = (ObjectSelection != null && ObjectSelection.AllowDrag);
+			
+			if (tag.HasValue) {
+				MonoDevelop.Core.LoggingService.LogDebug ("Stop Glib.Timeout (restart)");
+				GLib.Source.Remove (tag.Value);
+			}
+			MonoDevelop.Core.LoggingService.LogDebug ("Start Glib.Timeout");
+			tag = GLib.Timeout.Add (50, () => {
+				foreach (SelectionHandlePart s in selection) {
+					if (s.Fill == BoxFill.HLine || s.Fill == BoxFill.VLine) {
+						if (s.GdkWindow != null) {
+							s.GdkWindow.InvalidateRegion (s.GdkWindow.ClipRegion, false);
+						}
+					}
+				}
+				return true;
+			});
 		}
 		
 		public void Hide ()
 		{
 			foreach (Gtk.Widget s in selection)
 				s.Hide ();
+			if (tag.HasValue) {
+				MonoDevelop.Core.LoggingService.LogDebug ("Stop Glib.Timeout");
+				GLib.Source.Remove (tag.Value);
+			}
 		}
 		
 		public void Reposition (Gdk.Rectangle rect)
@@ -837,8 +858,23 @@ namespace Stetic
 		int clickX, clickY;
 		int localClickX, localClickY;
 		int ox, oy;
+		int offsetIncrement;
+		int offset = 0;
+		
+		const int penWidth = 8;
+		const int dashLength = 8;
+		const int maxOffset = 16;
+				
+		public BoxFill Fill {
+			get { return fill; }
+		}
 		
 		public SelectionHandlePart (BoxFill fill, BoxPos hpos, BoxPos vpos, int x, int y, BoxPos hposEnd, BoxPos vposEnd, int xEnd, int yEnd)
+			: this (fill, hpos, vpos, x, y, hposEnd, vposEnd, xEnd, yEnd, 0)
+		{
+		}
+		
+		public SelectionHandlePart (BoxFill fill, BoxPos hpos, BoxPos vpos, int x, int y, BoxPos hposEnd, BoxPos vposEnd, int xEnd, int yEnd, int offsetIncrement)
 		{
 			this.fill = fill;
 			this.hpos = hpos;
@@ -850,6 +886,10 @@ namespace Stetic
 			this.vposEnd = vposEnd;
 			this.xEnd = xEnd;
 			this.yEnd = yEnd;
+			this.offsetIncrement = offsetIncrement;
+			
+			var colormap = Gdk.Screen.Default.RgbaColormap;
+			Colormap = colormap;
 		}
 		
 		public void Reposition (Gdk.Rectangle rect)
@@ -892,27 +932,45 @@ namespace Stetic
 			int w, h;
 			this.GdkWindow.GetSize (out w, out h);
 			
-			if (fill == BoxFill.Box) {
-				this.GdkWindow.DrawRectangle (this.Style.WhiteGC, true, 0, 0, w, h);
-				this.GdkWindow.DrawRectangle (this.Style.BlackGC, false, 0, 0, w-1, h-1);
-			} else if (fill == BoxFill.HLine) {
-				Gdk.GC gc = new Gdk.GC (this.GdkWindow);
-				gc.SetDashes (0, new sbyte[] {1,1}, 2);
-				gc.SetLineAttributes (SelectionHandleBox.selectionLineWidth, Gdk.LineStyle.OnOffDash, Gdk.CapStyle.NotLast, Gdk.JoinStyle.Miter);
-				gc.Foreground = this.Style.Black;
-				this.GdkWindow.DrawLine (gc, 0, h/2, w, h/2);
-				gc.Foreground = this.Style.White;
-				this.GdkWindow.DrawLine (gc, 1, h/2, w, h/2);
-			} else {
-				Gdk.GC gc = new Gdk.GC (this.GdkWindow);
-				gc.SetDashes (0, new sbyte[] {1,1}, 2);
-				gc.SetLineAttributes (SelectionHandleBox.selectionLineWidth, Gdk.LineStyle.OnOffDash, Gdk.CapStyle.NotLast, Gdk.JoinStyle.Miter);
-				gc.Foreground = this.Style.Black;
-				this.GdkWindow.DrawLine (gc, w/2, 0, w/2, h);
-				gc.Foreground = this.Style.White;
-				this.GdkWindow.DrawLine (gc, w/2, 1, w/2, h);
+			using (Cairo.Context g = Gdk.CairoHelper.Create (this.GdkWindow)) {
+				g.Save ();
+				switch (fill) {
+				case BoxFill.Box :
+					g.LineWidth = penWidth;
+					g.Color = new Cairo.Color (0, 0, 0);
+					g.Rectangle (0, 0, w, h);
+					g.Stroke ();
+					g.SetSourceRGB (1.0, 1.0, 1.0);
+					g.Rectangle (2, 2, w - 2, h - 2);
+					g.Fill ();
+					Cairo.Gradient pattern = new Cairo.LinearGradient (0, 0, w, h);
+					pattern.AddColorStop (0, new Cairo.Color (1, 0, 0, 0.1));
+					pattern.AddColorStop (1, new Cairo.Color (1, 0, 0, 0.7));
+					g.Mask (pattern);
+					break;
+				case BoxFill.HLine : 
+					g.SetDash (new double[] {dashLength, dashLength}, offset);
+					g.Color = new Cairo.Color (0, 0, 0);
+					g.LineWidth = penWidth;
+					g.MoveTo (0, h);
+					g.LineTo (w, h);
+					g.Stroke ();
+					offset += offsetIncrement;
+					offset %= maxOffset;
+					break;
+				case BoxFill.VLine : 
+					g.SetDash (new double[] {dashLength, dashLength}, offset);
+					g.Color = new Cairo.Color (0, 0, 0);
+					g.LineWidth = penWidth;
+					g.MoveTo (w, 0);
+					g.LineTo (w, h);
+					g.Stroke ();
+					offset += offsetIncrement;
+					offset %= maxOffset;
+					break;
+				}
+				g.Restore ();
 			}
-			
 			return true;
 		}
 		
