@@ -112,6 +112,7 @@ namespace Stetic
 					
 					toolbar = new WidgetActionBar (frontend, rootWidget);
 					toolbar.AllowWidgetBinding = allowBinding;
+					toolbar.HeightRequest = 30;
 					pathbar = new PathBar (CreatePathWidget);
 					designer = new Gtk.VBox ();
 					designer.BorderWidth = 3;
