@@ -90,6 +90,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ArrayListVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ColorVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\DictionaryVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ExceptionVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\GdkColorVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ImageVisualizer.cs" />
