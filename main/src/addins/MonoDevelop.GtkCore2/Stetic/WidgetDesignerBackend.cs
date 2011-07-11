@@ -356,6 +356,11 @@ namespace Stetic
 				selectionWidget.Destroyed += SelectionDestroyed;
 				PlaceSelectionBoxInternal (selectionWidget);
 				selectionBox.ObjectSelection = currentObjectSelection;
+				selectionBox.IsRootWidget = false;
+				Stetic.Wrapper.Widget wrapper = Stetic.Wrapper.Widget.Lookup (widget);
+				if (wrapper != null) {
+					selectionBox.IsRootWidget = (wrapper.RootWrapperName == wrapper.Name);
+				}
 				selectionBox.Show ();
 			} else {
 				selectionBox.Hide ();
@@ -646,7 +651,7 @@ namespace Stetic
 			if (checkers == null || Allocation.Width != oldwidth || Allocation.Height != oldheight) {
 				checkers  = new Cairo.ImageSurface (Cairo.Format.RGB24, Allocation.Width, Allocation.Height);
 				using (Cairo.Context g = new Cairo.Context (checkers)) {
-					int size = 12;
+					int size = 16;
 					bool squareColor = true;
 					bool startsquareColor = true;
 					double x1 = 0;
@@ -654,7 +659,7 @@ namespace Stetic
 					double y1 = 0;
 					double y2 = Allocation.Height;
 					Cairo.Color light = new Cairo.Color (0.9, 0.9, 0.9);
-					Cairo.Color dark = new Cairo.Color (0.5, 0.5, 0.5);
+					Cairo.Color dark = new Cairo.Color (0.6, 0.6, 0.6);
 					for (double y = y1; y < y2; y += size) {
 						squareColor = startsquareColor;
 						startsquareColor = !startsquareColor;
@@ -686,6 +691,8 @@ namespace Stetic
 				g.SetSourceSurface (image, 0, 0);
 				g.Rectangle (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height );
 				g.Clip ();
+//				g.Color = new Cairo.Color (1, 1, 1);
+//				g.Paint ();
 				Cairo.Gradient pattern = new Cairo.LinearGradient (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height);
 				pattern.AddColorStop (0, new Cairo.Color (0, 0, 0, 0.2));
 				pattern.AddColorStop (1, new Cairo.Color (0, 0, 0, 1));
@@ -753,6 +760,8 @@ namespace Stetic
 		SelectionHandlePart dragHandlePart;
 		public ObjectSelection ObjectSelection;
 		uint? tag;
+		
+		public bool IsRootWidget { get; set; } 
 		
 		public SelectionHandleBox (Gtk.Widget parent)
 		{
@@ -926,6 +935,10 @@ namespace Stetic
 			else
 				px = rect.X + rect.Width / 2;
 		}
+				
+		bool DrawBoxes { 
+			get { return !ParentBox.IsRootWidget; }
+		}
 		
 		protected override bool OnExposeEvent (Gdk.EventExpose ev)
 		{
@@ -936,17 +949,21 @@ namespace Stetic
 				g.Save ();
 				switch (fill) {
 				case BoxFill.Box :
-					g.LineWidth = penWidth;
-					g.Color = new Cairo.Color (0, 0, 0);
-					g.Rectangle (0, 0, w, h);
-					g.Stroke ();
-					g.SetSourceRGB (1.0, 1.0, 1.0);
-					g.Rectangle (2, 2, w - 2, h - 2);
-					g.Fill ();
-					Cairo.Gradient pattern = new Cairo.LinearGradient (0, 0, w, h);
-					pattern.AddColorStop (0, new Cairo.Color (1, 0, 0, 0.1));
-					pattern.AddColorStop (1, new Cairo.Color (1, 0, 0, 0.7));
-					g.Mask (pattern);
+					if (DrawBoxes) {
+						g.LineWidth = penWidth;
+						g.Color = new Cairo.Color (0, 0, 0);
+						g.Rectangle (0, 0, w, h);
+						g.Stroke ();
+						g.SetSourceRGB (1.0, 1.0, 1.0);
+						g.Rectangle (2, 2, w - 2, h - 2);
+						g.Fill ();
+						Cairo.Gradient pattern = new Cairo.LinearGradient (0, 0, w, h);
+						pattern.AddColorStop (0, new Cairo.Color (1, 0, 0, 0.1));
+						pattern.AddColorStop (1, new Cairo.Color (1, 0, 0, 0.7));
+						g.Mask (pattern);
+					} else {
+						Hide ();
+					}
 					break;
 				case BoxFill.HLine : 
 					g.SetDash (new double[] {dashLength, dashLength}, offset);
