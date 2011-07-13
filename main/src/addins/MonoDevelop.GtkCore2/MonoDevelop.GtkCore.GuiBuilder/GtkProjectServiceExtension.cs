@@ -45,7 +45,14 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			return res;
 		}
 		
-		
+		protected override void Clean (IProgressMonitor monitor, SolutionEntityItem item, ConfigurationSelector configuration)
+		{
+			base.Clean (monitor, item, configuration);
+			
+			DotNetProject project = (DotNetProject) item;
+			GtkDesignInfo info = GtkDesignInfo.FromProject (project);
+			info.ForceCodeGenerationOnBuild ();
+		}
 	}
 	
 	class Generator

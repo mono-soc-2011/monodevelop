@@ -283,8 +283,10 @@ namespace MonoDevelop.GtkCore
 			if (!SupportsDesigner (project))
 				return;
 			try {
-				FileInfo fi = new FileInfo (SteticFile);
-				fi.LastWriteTime = DateTime.Now;
+				foreach (string designerFile in GetDesignerFiles ()) {
+					FileInfo fi = new FileInfo (designerFile);
+					fi.LastWriteTime = DateTime.Now;
+				}
 				project.SetNeedsBuilding (true);
 			} catch {
 				// Ignore errors here
@@ -373,6 +375,7 @@ namespace MonoDevelop.GtkCore
 			
 			string[] designerFiles = GetDesignerFiles ();
 			foreach (string filename in designerFiles) {
+				LoggingService.LogDebug ("GtkDesignInfo.UpdateGtkFolder : filename = {0}", filename);
 				ProjectFile pf = null;
 				if (!project.IsFileInProject (filename)) {
 					pf = project.AddFile (filename, BuildAction.EmbeddedResource);
