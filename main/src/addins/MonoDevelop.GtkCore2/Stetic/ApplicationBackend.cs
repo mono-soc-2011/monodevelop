@@ -150,7 +150,6 @@ namespace Stetic
 				Registry.BeginChangeSet ();
 				
 				libraries.Add (Registry.CoreWidgetLibrary.Name);
-//				libraries.Add (Registry.CoreWidgetLibrary2.Name);
 				
 				// Notify libraries that need to be unloaded and loaded again
 				foreach (WidgetLibrary lib in Registry.RegisteredWidgetLibraries) {
@@ -264,7 +263,8 @@ namespace Stetic
 		WidgetLibrary CreateLibrary (AssemblyResolver resolver, string name)
 		{
 			try {
-				if (allowInProcLibraries)
+//				if ((allowInProcLibraries) || name.Contains("GtkForms") || name.Contains("FreeFirma.Gtk"))
+				if (allowInProcLibraries) 
 					return new AssemblyWidgetLibrary (resolver, name);
 				else
 					return new CecilWidgetLibrary (resolver, name);
