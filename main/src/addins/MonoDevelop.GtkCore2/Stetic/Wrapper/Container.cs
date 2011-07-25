@@ -1126,15 +1126,32 @@ namespace Stetic.Wrapper
 			if (!IsDisposed)
 				UnSelect (selection);
 		}
-
+	
+		void CheckDragWidget (Gtk.Widget dragWidget)
+		{
+			//TableChild should have single column and row span
+			if (dragWidget.Parent is Gtk.Table) {
+				var table = (Gtk.Table) dragWidget.Parent;
+				var tablechild = (Gtk.Table.TableChild) table [dragWidget];
+				var colspan = tablechild.RightAttach - tablechild.LeftAttach;
+				var rowspan = tablechild.BottomAttach - tablechild.TopAttach;
+				if (colspan > 1 || rowspan > 1) {
+					tablechild.RightAttach = tablechild.LeftAttach + 1;
+				}
+			}
+		}
+		
 		Gtk.Widget dragSource;
-
+		
 		void HandleWindowDrag (Gdk.EventMotion evt, int dx, int dy)
 		{
 			Gtk.Widget dragWidget = selection;
 
 			Project.Selection = null;
-
+			
+			//various hacks that help Gtk.Drag.Begin method creates not null DragContext 
+			CheckDragWidget (dragWidget);
+			
 			using (UndoManager.AtomicChange) {
 				dragSource = CreateDragSource (dragWidget);
 			}
