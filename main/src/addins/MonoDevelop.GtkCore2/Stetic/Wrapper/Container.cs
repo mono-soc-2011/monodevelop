@@ -1137,6 +1137,7 @@ namespace Stetic.Wrapper
 				var rowspan = tablechild.BottomAttach - tablechild.TopAttach;
 				if (colspan > 1 || rowspan > 1) {
 					tablechild.RightAttach = tablechild.LeftAttach + 1;
+					tablechild.BottomAttach = tablechild.TopAttach + 1;
 				}
 			}
 		}
