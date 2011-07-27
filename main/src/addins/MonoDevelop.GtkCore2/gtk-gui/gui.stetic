@@ -37,7 +37,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="MonoDevelop.GtkCore.Dialogs.ProjectConversionDialog" design-size="516 363">
+  <widget class="Gtk.Dialog" id="MonoDevelop.GtkCore.Dialogs.ProjectConversionDialog" design-size="516 388">
     <property name="MemberName" />
     <property name="Title" translatable="yes">Project Name</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -106,7 +106,9 @@ for each project in the solution:
 	- split generated.cs into separate helper classes
 	- remove gtk-gui folder.
 	- create a designer folder for stock icons
-	  and generated designer helper classes.</property>
+	  and generated designer helper classes.
+
+</property>
                     <property name="UseMarkup">True</property>
                     <property name="Wrap">True</property>
                   </widget>
@@ -134,22 +136,12 @@ for each project in the solution:
           </packing>
         </child>
         <child>
-          <widget class="Gtk.HSeparator" id="hseparator1">
-            <property name="MemberName" />
-            <property name="HeightRequest">30</property>
-          </widget>
-          <packing>
-            <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
           <widget class="Gtk.Notebook" id="notebook">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">1</property>
+            <property name="CurrentPage">0</property>
+            <property name="ShowTabs">False</property>
+            <property name="BorderWidth">6</property>
             <child>
               <widget class="Gtk.Table" id="tableParameters">
                 <property name="MemberName" />
@@ -157,6 +149,7 @@ for each project in the solution:
                 <property name="NColumns">2</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
+                <property name="BorderWidth">6</property>
                 <child>
                   <widget class="Gtk.CheckButton" id="checkBackup">
                     <property name="MemberName" />
@@ -255,6 +248,7 @@ for each project in the solution:
               <widget class="Gtk.VBox" id="vboxProgress">
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
+                <property name="BorderWidth">6</property>
                 <child>
                   <widget class="Gtk.Label" id="labelProgress">
                     <property name="MemberName" />
@@ -295,7 +289,7 @@ for each project in the solution:
             </child>
           </widget>
           <packing>
-            <property name="Position">2</property>
+            <property name="Position">1</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
