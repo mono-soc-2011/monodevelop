@@ -504,6 +504,9 @@ namespace Stetic {
 			converting = true;
 			try {
 				LoadOldVersion (oldSteticFileName);
+				if (!Directory.Exists (newGuiFolderName)) {
+					Directory.CreateDirectory (newGuiFolderName);
+				}
 				Save (newGuiFolderName);
 			} finally {
 				converting = false;
