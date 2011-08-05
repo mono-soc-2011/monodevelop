@@ -651,25 +651,49 @@ namespace Stetic
 			if (checkers == null || Allocation.Width != oldwidth || Allocation.Height != oldheight) {
 				checkers  = new Cairo.ImageSurface (Cairo.Format.RGB24, Allocation.Width, Allocation.Height);
 				using (Cairo.Context g = new Cairo.Context (checkers)) {
-					int size = 16;
-					bool squareColor = true;
-					bool startsquareColor = true;
 					double x1 = 0;
 					double x2 = Allocation.Width;
 					double y1 = 0;
 					double y2 = Allocation.Height;
-					Cairo.Color light = new Cairo.Color (0.9, 0.9, 0.9);
-					Cairo.Color dark = new Cairo.Color (0.6, 0.6, 0.6);
-					for (double y = y1; y < y2; y += size) {
-						squareColor = startsquareColor;
-						startsquareColor = !startsquareColor;
-						for (double x = x1; x < x2; x += size) {
-							g.Rectangle (x, y, size, size);
-							g.Color = squareColor ? light : dark;
-							g.Fill ();
-							squareColor = !squareColor;
+					int xsize = 10;
+					int factor = 8;
+					g.Rectangle (x1, y1, x2, y2);
+					g.Color = new Cairo.Color (0.9, 0.9, 0.9);
+					g.Fill ();
+					for (double x = x1; x < x2; x += xsize) {
+						if((x % (factor * xsize)) != 0) {
+							g.Color = new Cairo.Color (0.8, 0.8, 0.8);
+							g.LineWidth = 1;
+							g.MoveTo (x + 0.5, 0.5);
+							g.LineTo (x + 0.5, y2 + 0.5);
+							g.Stroke ();
 						}
 					}
+					for (double y = y1; y < y2; y += xsize) {
+						if ((y % (factor * xsize)) != 0) {
+							g.Color = new Cairo.Color (0.8, 0.8, 0.8);
+							g.LineWidth = 1;
+							g.MoveTo (0.5, y + 0.5);
+							g.LineTo (x2 + 0.5, y + 0.5);
+							g.Stroke ();
+						}
+					}
+					for (double x = x1; x < x2; x += (xsize * factor)) {
+						g.Color = new Cairo.Color (0.4, 0.4, 0.4);
+						
+						g.LineWidth = 1;
+						g.MoveTo (x + 0.5, 0.5);
+						g.LineTo (x + 0.5, y2 + 0.5);
+						g.Stroke ();
+					}
+					for (double y = y1; y < y2; y += (xsize * factor)) {
+						g.Color = new Cairo.Color (0.4, 0.4, 0.4);
+						g.LineWidth = 1;
+						g.MoveTo (0.5, y + 0.5);
+						g.LineTo (x2 + 0.5, y + 0.5);
+						g.Stroke ();
+					}
+					
 					oldwidth = Allocation.Width;
 					oldheight = Allocation.Height;
 				}
@@ -691,12 +715,7 @@ namespace Stetic
 				g.SetSourceSurface (image, 0, 0);
 				g.Rectangle (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height );
 				g.Clip ();
-//				g.Color = new Cairo.Color (1, 1, 1);
-//				g.Paint ();
-				Cairo.Gradient pattern = new Cairo.LinearGradient (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height);
-				pattern.AddColorStop (0, new Cairo.Color (0, 0, 0, 0.2));
-				pattern.AddColorStop (1, new Cairo.Color (0, 0, 0, 1));
-				g.Mask (pattern);
+				g.Paint ();
 				g.Restore ();
 			}
 			
@@ -760,6 +779,7 @@ namespace Stetic
 		SelectionHandlePart dragHandlePart;
 		public ObjectSelection ObjectSelection;
 		uint? tag;
+		object locker;
 		
 		public bool IsRootWidget { get; set; } 
 		
@@ -789,6 +809,7 @@ namespace Stetic
 				s.Parent = parent;
 				s.ParentBox = this;
 			}
+			locker = new object ();
 		}
 		
 		public void Show ()
@@ -805,8 +826,10 @@ namespace Stetic
 			tag = GLib.Timeout.Add (50, () => {
 				foreach (SelectionHandlePart s in selection) {
 					if (s.Fill == BoxFill.HLine || s.Fill == BoxFill.VLine) {
-						if (s.GdkWindow != null) {
-							s.GdkWindow.InvalidateRegion (s.GdkWindow.ClipRegion, false);
+						lock (locker) {
+							if (s.GdkWindow != null) {
+								s.GdkWindow.InvalidateRegion (s.GdkWindow.ClipRegion, false);
+							}
 						}
 					}
 				}
@@ -967,20 +990,20 @@ namespace Stetic
 					break;
 				case BoxFill.HLine : 
 					g.SetDash (new double[] {dashLength, dashLength}, offset);
-					g.Color = new Cairo.Color (0, 0, 0);
+					g.Color = new Cairo.Color (0.2, 0.2, 0.2);
 					g.LineWidth = penWidth;
-					g.MoveTo (0, h);
-					g.LineTo (w, h);
+					g.MoveTo (0 + 0.5, h + 0.5);
+					g.LineTo (w + 0.5, h + 0.5);
 					g.Stroke ();
 					offset += offsetIncrement;
 					offset %= maxOffset;
 					break;
 				case BoxFill.VLine : 
 					g.SetDash (new double[] {dashLength, dashLength}, offset);
-					g.Color = new Cairo.Color (0, 0, 0);
+					g.Color = new Cairo.Color (0.2, 0.2, 0.2);
 					g.LineWidth = penWidth;
-					g.MoveTo (w, 0);
-					g.LineTo (w, h);
+					g.MoveTo (w + 0.5, 0 + 0.5);
+					g.LineTo (w + 0.5, h + 0.5);
 					g.Stroke ();
 					offset += offsetIncrement;
 					offset %= maxOffset;
