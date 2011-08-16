@@ -79,6 +79,7 @@ FILES =  \
 	Stetic/ApplicationBackendController.cs \
 	Stetic/AssemblyResolver.cs \
 	Stetic/AssemblyWidgetLibrary.cs \
+	Stetic/CairoUtil.cs \
 	Stetic/CecilClassDescriptor.cs \
 	Stetic/CecilPropertyDescriptor.cs \
 	Stetic/CecilSignalDescriptor.cs \
@@ -237,6 +238,7 @@ FILES =  \
 	Stetic/Wrapper/ActionGroup.cs \
 	Stetic/Wrapper/ActionToolbarWrapper.cs \
 	Stetic/Wrapper/ActionTree.cs \
+	Stetic/Wrapper/Alignment.cs \
 	Stetic/Wrapper/Bin.cs \
 	Stetic/Wrapper/Box.cs \
 	Stetic/Wrapper/Button.cs \
@@ -301,8 +303,8 @@ RES =  \
 	icons/gtkx.png \
 	icons/image-x-generic.png \
 	MonoDevelop.GtkCore2.addin.xml,MonoDevelop.GtkCore.addin.xml \
-	Stetic/action.png,MonoDevelop.GtkCore.Stetic.action.png \
-	Stetic/stetic.glade,MonoDevelop.GtkCore.Stetic.stetic.glade \
+	Stetic/action.png \
+	Stetic/stetic.glade \
 	Stetic/Wrapper/objects.xml \
 	Stetic/Wrapper/pixmaps/accellabel.png \
 	Stetic/Wrapper/pixmaps/actiongroup.png \
