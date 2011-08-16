@@ -650,6 +650,7 @@
     <Compile Include="Stetic\Windows\Preview.cs" />
     <Compile Include="Stetic\Windows\WindowsTheme.cs" />
     <Compile Include="Stetic\Wrapper\Alignment.cs" />
+    <Compile Include="Stetic\CairoUtil.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Mono.Addins.targets" />

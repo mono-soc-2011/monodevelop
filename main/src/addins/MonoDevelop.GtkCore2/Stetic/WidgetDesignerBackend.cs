@@ -216,7 +216,7 @@ namespace Stetic
 		Requisition currentSizeRequest;
 		
 		SelectionHandleBox selectionBox;
-		Gtk.Widget selectionWidget;
+		public Gtk.Widget selectionWidget;
 		ObjectSelection currentObjectSelection;
 		ArrayList topLevels = new ArrayList ();
 		ArrayList trackingSize = new ArrayList ();
@@ -646,7 +646,7 @@ namespace Stetic
 			return base.OnButtonReleaseEvent (ev);
 		}
 		
-		Cairo.ImageSurface GetCheckersImage ()
+		Cairo.ImageSurface GetBackgroundImage ()
 		{
 			if (checkers == null || Allocation.Width != oldwidth || Allocation.Height != oldheight) {
 				checkers  = new Cairo.ImageSurface (Cairo.Format.RGB24, Allocation.Width, Allocation.Height);
@@ -659,10 +659,14 @@ namespace Stetic
 					int factor = 8;
 					g.Rectangle (x1, y1, x2, y2);
 					g.Color = new Cairo.Color (0.9, 0.9, 0.9);
+//					Cairo.Color bold = CairoUtil.ColorFromRgb (65, 105, 225);
+//					Cairo.Color thin = CairoUtil.ColorFromRgb (100, 149,237);
+					Cairo.Color bold = new Cairo.Color (0.4, 0.4, 0.4);
+					Cairo.Color thin = new Cairo.Color (0.8, 0.8, 0.8);
 					g.Fill ();
 					for (double x = x1; x < x2; x += xsize) {
 						if((x % (factor * xsize)) != 0) {
-							g.Color = new Cairo.Color (0.8, 0.8, 0.8);
+							g.Color = thin;
 							g.LineWidth = 1;
 							g.MoveTo (x + 0.5, 0.5);
 							g.LineTo (x + 0.5, y2 + 0.5);
@@ -671,7 +675,7 @@ namespace Stetic
 					}
 					for (double y = y1; y < y2; y += xsize) {
 						if ((y % (factor * xsize)) != 0) {
-							g.Color = new Cairo.Color (0.8, 0.8, 0.8);
+							g.Color = thin;
 							g.LineWidth = 1;
 							g.MoveTo (0.5, y + 0.5);
 							g.LineTo (x2 + 0.5, y + 0.5);
@@ -679,15 +683,14 @@ namespace Stetic
 						}
 					}
 					for (double x = x1; x < x2; x += (xsize * factor)) {
-						g.Color = new Cairo.Color (0.4, 0.4, 0.4);
-						
+						g.Color = bold;
 						g.LineWidth = 1;
 						g.MoveTo (x + 0.5, 0.5);
 						g.LineTo (x + 0.5, y2 + 0.5);
 						g.Stroke ();
 					}
 					for (double y = y1; y < y2; y += (xsize * factor)) {
-						g.Color = new Cairo.Color (0.4, 0.4, 0.4);
+						g.Color = bold;
 						g.LineWidth = 1;
 						g.MoveTo (0.5, y + 0.5);
 						g.LineTo (x2 + 0.5, y + 0.5);
@@ -711,7 +714,7 @@ namespace Stetic
 			using (Cairo.Context g = Gdk.CairoHelper.Create (this.GdkWindow)) {
 				g.Save ();
 			
-				Cairo.Surface image = GetCheckersImage ();
+				Cairo.Surface image = GetBackgroundImage ();
 				g.SetSourceSurface (image, 0, 0);
 				g.Rectangle (ev.Area.Left, ev.Area.Top, ev.Area.Width, ev.Area.Height );
 				g.Clip ();
@@ -1025,21 +1028,51 @@ namespace Stetic
 			return true;
 		}
 		
+		Gdk.Rectangle GetAreaResizeX ()
+		{
+			return ((ResizableFixed)Parent).selectionWidget.Allocation;
+		}
+		
 		protected override bool OnMotionNotifyEvent (Gdk.EventMotion evm)
 		{
-			if ((evm.State & Gdk.ModifierType.Button1Mask) == 0)
-				return false;
-
-			if (!Gtk.Drag.CheckThreshold (this, clickX, clickY, (int)evm.XRoot, (int)evm.YRoot))
-				return false;
-
-			if (ParentBox.ObjectSelection != null && ParentBox.ObjectSelection.AllowDrag) {
-				int dx = Allocation.X - ox + localClickX;
-				int dy = Allocation.Y - oy + localClickY;
-				ParentBox.ObjectSelection.FireDrag (evm, dx, dy);
+			if ((evm.State & Gdk.ModifierType.Button1Mask) != 0) {
+				
+				if (!Gtk.Drag.CheckThreshold (this, clickX, clickY, (int)evm.XRoot, (int)evm.YRoot))
+					return false;
+	
+				if (ParentBox.ObjectSelection != null && ParentBox.ObjectSelection.AllowDrag) {
+					int dx = Allocation.X - ox + localClickX;
+					int dy = Allocation.Y - oy + localClickY;
+					ParentBox.ObjectSelection.FireDrag (evm, dx, dy);
+				}
+				
+				return true;
 			}
-
-			return true;
+			
+			if ((evm.State & Gdk.ModifierType.Button3Mask) != 0) {
+				if (ParentBox.ObjectSelection != null && ParentBox.ObjectSelection.AllowDrag) {
+					int dx = Allocation.X - ox + localClickX;
+					int dy = Allocation.Y - oy + localClickY;
+					Gtk.Widget selectionWidget = ((ResizableFixed)Parent).selectionWidget;
+					if (selectionWidget.WidthRequest == -1) {
+						selectionWidget.WidthRequest = ParentBox.Allocation.Width;
+					}
+					if (selectionWidget.HeightRequest == -1) {
+						selectionWidget.HeightRequest = ParentBox.Allocation.Height;
+					}
+					int reqX = ((ResizableFixed)Parent).selectionWidget.WidthRequest + (int)(evm.X/4);
+					int reqY = ((ResizableFixed)Parent).selectionWidget.HeightRequest + (int)(evm.Y/4);
+					//if (reqX > ParentBox.Allocation.Width) {
+						((ResizableFixed)Parent).selectionWidget.WidthRequest = reqX;
+					//}
+					//if (reqY > ParentBox.Allocation.Height) {
+						((ResizableFixed)Parent).selectionWidget.HeightRequest = reqY;
+					//}
+				}
+				return true;
+			}
+			
+			return false;
 		}
 	}
 	
