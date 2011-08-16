@@ -123,6 +123,16 @@ namespace Stetic
 			UpdateSensitivity ();
 		}
 		
+		void RemoveLastSeparator ()
+		{
+			if (NItems != 0) {
+				var last = GetNthItem (NItems - 1);
+				if(last is Gtk.SeparatorToolItem) {
+					Remove (last);
+				}
+			}
+		}
+		
 		protected virtual void AddWidgetCommands (ObjectWrapper wrapper)
 		{
 			if (allowBinding && wrapper != RootWidget) {
@@ -134,8 +144,21 @@ namespace Stetic
 				Insert (bindButton, -1);
 			}
 			AddCommands (wrapper);
+			RemoveLastSeparator ();
 		}
 		
+		void InsertSeparator ()
+		{
+			if (NItems != 0) { 
+				var last = GetNthItem (NItems - 1);
+				if ((last as Gtk.SeparatorToolItem) == null) {
+					var separator = new Gtk.SeparatorToolItem();
+					Insert (separator, -1);
+					separator.ShowAll ();
+				}
+			}
+		}
+
 		void AddCommands (ObjectWrapper wrapper)
 		{
 			foreach (ItemGroup igroup in wrapper.ClassDescriptor.ItemGroups) {
@@ -144,6 +167,8 @@ namespace Stetic
 						AppendCommand ((CommandDescriptor) desc, wrapper);
 				}
 			}
+			
+			InsertSeparator ();
 			
 			Stetic.Wrapper.Widget widget = wrapper as Stetic.Wrapper.Widget;
 			if (widget != null) {
