@@ -100,8 +100,17 @@ namespace Stetic {
 
 		public bool IsDefaultValue (object value)
 		{
+			if (value == null) {
+				return false;
+			}
+			
 			GLib.Value gvalue = new GLib.Value (value);
-			return g_param_value_defaults  (Raw, ref gvalue);
+			try {
+				return g_param_value_defaults  (Raw, ref gvalue);
+			} 
+			catch (Exception) {
+				return false;
+			}
 		}
 
 /*		[DllImport("libsteticglue")]
