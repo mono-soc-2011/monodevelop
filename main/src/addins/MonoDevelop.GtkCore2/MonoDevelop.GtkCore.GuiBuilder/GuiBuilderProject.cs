@@ -85,6 +85,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 		{
 			GtkDesignInfo info = GtkDesignInfo.FromProject (project); 
 			Stetic.Project gproject = GuiBuilderService.SteticApp.CreateProject (info);
+			IProgressMonitor monitor = IdeApp.Workbench.ProgressMonitors.GetLoadProgressMonitor (false);
 			//Stetic.Project does not implement IDisposable
 			try {
 				string newGuiFolderName = project.BaseDirectory.Combine (guiFolderName);
@@ -92,7 +93,6 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 				info.ConvertGtkFolder (guiFolderName, makeBackup);
 				info.UpdateGtkFolder ();
 				folderName = newGuiFolderName;
-				IProgressMonitor monitor = IdeApp.Workbench.ProgressMonitors.GetBuildProgressMonitor ();
 				try {
 					ConfigurationSelector configuration = IdeApp.Workspace.ActiveConfiguration;
 					Generator generator = new Generator ();
