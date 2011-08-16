@@ -392,9 +392,9 @@ namespace Stetic
 				Wrapper.Container parent = null;
 				if (index > 0) {
 					entry = path [index - 1];
-					parent = (Wrapper.Container) RootWidget.FindChild (entry.Text);
+					parent = (Wrapper.Container) RootWidget.FindChild (entry.Markup);
 				} 
-				string name = path [index].Text;
+				string name = path [index].Markup;
 				Gtk.Widget[] children = null;
 				if (parent != null) {
 					var container = (Gtk.Container)parent.Wrapped;
