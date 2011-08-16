@@ -42,6 +42,7 @@ using MonoDevelop.Core.Execution;
 using MonoDevelop.Deployment;
 using MonoDevelop.Projects.Policies;
 using MonoDevelop.Ide;
+using MonoDevelop.Ide.Gui.Content;
 
 namespace MonoDevelop.GtkCore.GuiBuilder
 {
@@ -542,12 +543,18 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 		
 		static string FormatGeneratedFile (string file, string content, CodeDomProvider provider)
 		{
-			//TODO : Wait for a fix for Mono.TextEditor.Document in the trunk
-			//content = StripHeaderAndBlankLines (content, provider);
+			content = StripHeaderAndBlankLines (content, provider);
+			
+			var pol = PolicyService.InvariantPolicies.Get<TextStylePolicy> ();
+			string eol = pol.GetEolMarker ();
+			if (Environment.NewLine != eol)
+				content = content.Replace (Environment.NewLine, eol);
+			
 			string mt = DesktopService.GetMimeTypeForUri (file);
 			var formatter = MonoDevelop.Ide.CodeFormatting.CodeFormatterService.GetFormatter (mt);
-			if (formatter != null)
-				content = formatter.FormatText (PolicyService.InvariantPolicies, content);
+//			if (formatter != null)
+//				content = formatter.FormatText (PolicyService.InvariantPolicies, content);
+			
 			return content;
 		}
 		

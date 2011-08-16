@@ -4,9 +4,9 @@
        author	 = "Lluis Sanchez Gual, Krzysztof Marecki"
        copyright = "X11"
        url       = ""
-       description = "Experimental GTK# visual designer developed during GSOC 2010 as a fork of stetic"
+       description = "Experimental GTK# visual designer developed during GSOC 2011 as a fork of stetic"
 	   category    = "IDE extensions"
-       version   = "2.5.91">
+       version   = "2.6">
 
 	<Runtime>
 		<Import assembly="MonoDevelop.GtkCore2.dll"/>
