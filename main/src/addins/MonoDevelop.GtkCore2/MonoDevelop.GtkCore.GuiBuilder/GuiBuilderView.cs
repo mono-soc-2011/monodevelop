@@ -26,8 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-
 using System;
 using System.ComponentModel;
 
@@ -165,6 +163,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			CloseProject ();
 			if (project != null) {
 				GuiBuilderWindow w = GuiBuilderDisplayBinding.GetWindow (this.ContentName);
+				MonoDevelop.Core.LoggingService.LogDebug ("GuiBuilderView.ReloadDisgner : ContentName={0}", ContentName);
 				if (w != null) {
 					AttachWindow (w);
 					if (designerStatus != null)
@@ -197,7 +196,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 		{
 			if (designer == null)
 				return;
-			
+		
 			gproject.Unloaded -= OnDisposeProject;
 			designer.BindField -= OnBindWidgetField;
 			designer.Changed -= OnChanged;

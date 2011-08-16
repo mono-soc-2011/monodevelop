@@ -310,6 +310,9 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 			if (item != null)
 				component = item.Component;
 			
+			MonoDevelop.Core.LoggingService.LogDebug (
+				"GuiBuilderService.GenerateSteticCodeStructure : name={0}", name);
+			
 			CodeCompileUnit cu = new CodeCompileUnit ();
 			
 			if (project.UsePartialTypes) {
@@ -408,7 +411,7 @@ namespace MonoDevelop.GtkCore.GuiBuilder
 				return null;
 
 			monitor.Log.WriteLine (GettextCatalog.GetString ("Generating GUI code for project '{0}'...", project.Name));
-			
+			LoggingService.LogDebug (GettextCatalog.GetString ("Generating GUI code for project '{0}'...", project.Name));
 			// Make sure the referenced assemblies are up to date. It is necessary to do
 			// it now since they may contain widget libraries.
 			project.CopySupportFiles (monitor, configuration);
