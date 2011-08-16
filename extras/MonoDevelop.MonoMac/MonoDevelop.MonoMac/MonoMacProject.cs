@@ -36,17 +36,16 @@ using MonoDevelop.Core.Execution;
 using MonoDevelop.Ide;
 using System.Reflection;
 using MonoDevelop.MacDev.Plist;
+using MonoDevelop.MacDev.XcodeSyncing;
+using MonoDevelop.MacDev.XcodeIntegration;
+using MonoDevelop.MacDev.NativeReferences;
 
 namespace MonoDevelop.MonoMac
 {
-	public class MonoMacProject : DotNetProject
+	public class MonoMacProject : DotNetProject, IXcodeTrackedProject, INativeReferencingProject
 	{
 		public override string ProjectType {
 			get { return "MonoMac"; }
-		}
-		
-		public MonoMacCodeBehind CodeBehindGenerator {
-			get; private set;
 		}
 		
 		#region Constructors
@@ -74,9 +73,47 @@ namespace MonoDevelop.MonoMac
 			*/
 		}
 		
+		XcodeProjectTracker projectTracker;
+		
+		XcodeProjectTracker IXcodeTrackedProject.XcodeProjectTracker {
+			get {
+				return projectTracker ?? (projectTracker = new MonoMacXcodeProjectTracker (this));
+			}
+		}
+			
 		void Init ()
 		{
-			CodeBehindGenerator = new MonoMacCodeBehind (this);
+		}
+		
+		protected override void OnEndLoad ()
+		{
+			base.OnEndLoad ();
+		}
+		
+		public override void Dispose ()
+		{
+			base.Dispose ();
+			if (projectTracker != null) {
+				projectTracker.Dispose ();
+				projectTracker = null;
+			}
+		}
+		
+		class MonoMacXcodeProjectTracker : XcodeProjectTracker
+		{
+			static MonoDevelop.MacDev.ObjCIntegration.NSObjectInfoService infoService =
+				new MonoDevelop.MacDev.ObjCIntegration.NSObjectInfoService ("MonoMac");
+			
+			public MonoMacXcodeProjectTracker (MonoMacProject project) : base (project, infoService)
+			{
+			}
+			
+			protected override XcodeProject CreateProject (string name)
+			{
+				var proj = new XcodeProject (name, "macosx", "MonoMac");
+				proj.AddFramework ("Cocoa");
+				return proj;
+			}
 		}
 		
 		public override bool SupportsFormat (FileFormat format)
@@ -130,10 +167,11 @@ namespace MonoDevelop.MonoMac
 			//HACK: workaround for MD not local-copying package references
 			foreach (var projectReference in References) {
 				if (projectReference.Package != null && projectReference.Package.Name == "monomac") {
-					if (projectReference.LocalCopy && projectReference.ReferenceType == ReferenceType.Gac) {
+					if (projectReference.ReferenceType == ReferenceType.Gac) {
 						foreach (var assem in projectReference.Package.Assemblies) {
 							list.Add (assem.Location);
-							if (((MonoMacProjectConfiguration)solutionConfiguration.GetConfiguration (this)).DebugMode) {
+							var cfg = (MonoMacProjectConfiguration)solutionConfiguration.GetConfiguration (this);
+							if (cfg.DebugMode) {
 								var mdbFile = TargetRuntime.GetAssemblyDebugInfoFile (assem.Location);
 								if (File.Exists (mdbFile))
 									list.Add (mdbFile);

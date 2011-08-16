@@ -41,6 +41,7 @@ FILES =  \
 	gtk-gui/MonoDevelop.Ide.FindInFiles.SearchResultWidget.cs \
 	gtk-gui/MonoDevelop.Ide.Fonts.FontChooserPanelWidget.cs \
 	gtk-gui/MonoDevelop.Ide.Gui.Components.ExecutionModeComboBox.cs \
+	gtk-gui/MonoDevelop.Ide.Gui.Components.PriorityList.cs \
 	gtk-gui/MonoDevelop.Ide.Gui.Components.ProjectSelectorWidget.cs \
 	gtk-gui/MonoDevelop.Ide.Gui.Components.StringTagSelectorButton.cs \
 	gtk-gui/MonoDevelop.Ide.Gui.Dialogs.AddinLoadErrorDialog.cs \
@@ -103,7 +104,6 @@ FILES =  \
 	gtk-gui/MonoDevelop.Ide.Projects.SelectReferenceDialog.cs \
 	gtk-gui/MonoDevelop.Ide.SelectEncodingsDialog.cs \
 	gtk-gui/MonoDevelop.Ide.StandardHeader.StandardHeaderPolicyPanelWidget.cs \
-	gtk-gui/MonoDevelop.Ide.Updater.UpdateDialog.cs \
 	MonoDevelop.Components.AutoTest/AutoTestClientSession.cs \
 	MonoDevelop.Components.AutoTest/AutoTestService.cs \
 	MonoDevelop.Components.AutoTest/AutoTestSession.cs \
@@ -214,6 +214,7 @@ FILES =  \
 	MonoDevelop.Components.PropertyGrid.Editors/EnumerationEditorCell.cs \
 	MonoDevelop.Components.PropertyGrid.Editors/EventEditor.cs \
 	MonoDevelop.Components.PropertyGrid.Editors/ExpandableObjectEditor.cs \
+	MonoDevelop.Components.PropertyGrid.Editors/FilePathEditor.cs \
 	MonoDevelop.Components.PropertyGrid.Editors/FlagsEditorCell.cs \
 	MonoDevelop.Components.PropertyGrid.Editors/FlagsSelectorDialog.cs \
 	MonoDevelop.Components.PropertyGrid.Editors/FloatRange.cs \
@@ -411,6 +412,7 @@ FILES =  \
 	MonoDevelop.Ide.Gui.Components/NodeCommandHandler.cs \
 	MonoDevelop.Ide.Gui.Components/NodeState.cs \
 	MonoDevelop.Ide.Gui.Components/PadTreeView.cs \
+	MonoDevelop.Ide.Gui.Components/PriorityList.cs \
 	MonoDevelop.Ide.Gui.Components/ProjectFileEntry.cs \
 	MonoDevelop.Ide.Gui.Components/ProjectSelectorWidget.cs \
 	MonoDevelop.Ide.Gui.Components/StringTagSelectorButton.cs \
@@ -449,6 +451,7 @@ FILES =  \
 	MonoDevelop.Ide.Gui.Dialogs/AddinLoadErrorDialog.cs \
 	MonoDevelop.Ide.Gui.Dialogs/CommonAboutDialog.cs \
 	MonoDevelop.Ide.Gui.Dialogs/DirtyFilesDialog.cs \
+	MonoDevelop.Ide.Gui.Dialogs/FeedbackDialog.cs \
 	MonoDevelop.Ide.Gui.Dialogs/FileSelectorDialog.cs \
 	MonoDevelop.Ide.Gui.Dialogs/GtkAlertDialog.cs \
 	MonoDevelop.Ide.Gui.Dialogs/GtkErrorDialog.cs \
@@ -484,6 +487,7 @@ FILES =  \
 	MonoDevelop.Ide.Gui.OptionPanels/LoadSavePanel.cs \
 	MonoDevelop.Ide.Gui.OptionPanels/MaintenanceOptionsPanel.cs \
 	MonoDevelop.Ide.Gui.OptionPanels/MonoRuntimePanel.cs \
+	MonoDevelop.Ide.Gui.OptionPanels/SdkLocationPanel.cs \
 	MonoDevelop.Ide.Gui.OptionPanels/TasksOptionsPanel.cs \
 	MonoDevelop.Ide.Gui.OptionPanels/TextStylePolicyPanel.cs \
 	MonoDevelop.Ide.Gui.Pads.ClassPad/ClassBrowserPad.cs \
@@ -533,7 +537,6 @@ FILES =  \
 	MonoDevelop.Ide.Gui/AbstractBaseViewContent.cs \
 	MonoDevelop.Ide.Gui/AbstractPadContent.cs \
 	MonoDevelop.Ide.Gui/AbstractViewContent.cs \
-	MonoDevelop.Ide.Gui/AddinUpdateHandler.cs \
 	MonoDevelop.Ide.Gui/AsyncDispatchAttribute.cs \
 	MonoDevelop.Ide.Gui/BackgroundProgressMonitor.cs \
 	MonoDevelop.Ide.Gui/ConfigurationComboBox.cs \
@@ -667,13 +670,10 @@ FILES =  \
 	MonoDevelop.Ide.Templates/SolutionDescriptor.cs \
 	MonoDevelop.Ide.Templates/SolutionItemDescriptor.cs \
 	MonoDevelop.Ide.Templates/TextFileDescriptionTemplate.cs \
-	MonoDevelop.Ide.Updater/UpdateCommands.cs \
-	MonoDevelop.Ide.Updater/UpdateDialog.cs \
-	MonoDevelop.Ide.Updater/UpdateInfoExtensionNode.cs \
-	MonoDevelop.Ide.Updater/UpdateRank.cs \
-	MonoDevelop.Ide.Updater/UpdateResult.cs \
+	MonoDevelop.Ide.Updater/AddinsUpdateHandler.cs \
+	MonoDevelop.Ide.Updater/IUpdateHandler.cs \
+	MonoDevelop.Ide.Updater/UpdateCheckHandler.cs \
 	MonoDevelop.Ide.Updater/UpdateService.cs \
-	MonoDevelop.Ide.Updater/UpdateTagExtensionNode.cs \
 	MonoDevelop.Ide.WebBrowser/IWebBrowser.cs \
 	MonoDevelop.Ide.WebBrowser/IWebBrowserLoader.cs \
 	MonoDevelop.Ide.WebBrowser/LoadingProgressChangedEventArgs.cs \
@@ -686,6 +686,7 @@ FILES =  \
 	MonoDevelop.Ide/DesktopService.cs \
 	MonoDevelop.Ide/DispatchService.cs \
 	MonoDevelop.Ide/ExitEventHandler.cs \
+	MonoDevelop.Ide/FeedbackService.cs \
 	MonoDevelop.Ide/GLibLogging.cs \
 	MonoDevelop.Ide/HelpOperations.cs \
 	MonoDevelop.Ide/Ide.cs \
@@ -718,6 +719,7 @@ RES =  \
 	icons/assembly-project-16.png \
 	icons/author-information-16.png \
 	icons/author-information-24.png \
+	icons/balloon.png \
 	icons/breakpoint-16.png \
 	icons/breakpoint-22.png \
 	icons/breakpoint-disable-all-16.png \
@@ -831,6 +833,7 @@ RES =  \
 	icons/navigate-previous-24.png \
 	icons/package-x-generic.png \
 	icons/package-x-generic_22.png \
+	icons/package-x-generic_32.png \
 	icons/pad-task-list-16.png \
 	icons/pad-task-list-24.png \
 	icons/parsing.png \
@@ -850,6 +853,7 @@ RES =  \
 	icons/project-reference-package-16.png \
 	icons/project-reference-project-16.png \
 	icons/remove-namespace-16.png \
+	icons/software-update-available.png \
 	icons/solution-16.png \
 	icons/solution-32.png \
 	icons/solution-folder-closed-16.png \
@@ -870,6 +874,7 @@ RES =  \
 	icons/text-editor-22.png \
 	icons/text-editor-behavior-16.png \
 	icons/text-editor-behavior-24.png \
+	icons/text-quickfix-16.png \
 	icons/tools-external-tools-16.png \
 	icons/tools-external-tools-24.png \
 	icons/uncomment.png \

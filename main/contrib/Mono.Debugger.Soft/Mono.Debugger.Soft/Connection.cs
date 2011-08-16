@@ -270,6 +270,18 @@ namespace Mono.Debugger.Soft
 			get; set;
 		}
 
+		public int Level {
+			get; set;
+		}
+
+		public string Category {
+			get; set;
+		}
+
+		public string Message {
+			get; set;
+		}
+
 		public EventInfo (EventType type, int req_id) {
 			EventType = type;
 			ReqId = req_id;
@@ -356,7 +368,10 @@ namespace Mono.Debugger.Soft
 			BREAKPOINT = 10,
 			STEP = 11,
 			TYPE_LOAD = 12,
-			EXCEPTION = 13
+			EXCEPTION = 13,
+			KEEPALIVE = 14,
+			USER_BREAK = 15,
+			USER_LOG = 16
 		}
 
 		enum ModifierKind {
@@ -377,7 +392,8 @@ namespace Mono.Debugger.Soft
 			DISPOSE = 6,
 			INVOKE_METHOD = 7,
 			SET_PROTOCOL_VERSION = 8,
-			ABORT_INVOKE = 9
+			ABORT_INVOKE = 9,
+			SET_KEEPALIVE = 10
 		}
 
 		enum CmdEvent {
@@ -1043,7 +1059,7 @@ namespace Mono.Debugger.Soft
 		bool disconnected;
 
 		void receiver_thread_main () {
-			while (true) {
+			while (!closed) {
 				try {
 					bool res = ReceivePacket ();
 					if (!res)
@@ -1057,6 +1073,7 @@ namespace Mono.Debugger.Soft
 			lock (reply_packets_monitor) {
 				disconnected = true;
 				Monitor.PulseAll (reply_packets_monitor);
+				socket.Close ();
 			}
 			EventHandler.VMDisconnect (0, 0, null);
 		}
@@ -1166,6 +1183,21 @@ namespace Mono.Debugger.Soft
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.AppDomainUnload (req_id, thread_id, id);
+							} else if (kind == EventKind.USER_BREAK) {
+								long thread_id = r.ReadId ();
+								long id = 0;
+								long loc = 0;
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
+								//EventHandler.Exception (req_id, thread_id, id, loc);
+							} else if (kind == EventKind.USER_LOG) {
+								long thread_id = r.ReadId ();
+								int level = r.ReadInt ();
+								string category = r.ReadString ();
+								string message = r.ReadString ();
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Level = level, Category = category, Message = message };
+								//EventHandler.Exception (req_id, thread_id, id, loc);
+							} else if (kind == EventKind.KEEPALIVE) {
+								events [i] = new EventInfo (etype, req_id) { };
 							} else {
 								throw new NotImplementedException ("Unknown event kind: " + kind);
 							}
@@ -1204,6 +1236,9 @@ namespace Mono.Debugger.Soft
 
 		PacketReader SendReceive (CommandSet command_set, int command, PacketWriter packet) {
 			int id = IdGenerator;
+
+			if (disconnected)
+				throw new VMDisconnectedException ();
 
 			if (packet == null)
 				WritePacket (EncodePacket (id, (int)command_set, command, null, 0));
@@ -1379,6 +1414,13 @@ namespace Mono.Debugger.Soft
 		public void VM_AbortInvoke (long thread, int id)
 		{
 			SendReceive (CommandSet.VM, (int)CmdVM.ABORT_INVOKE, new PacketWriter ().WriteId (thread).WriteInt (id));
+		}
+
+		public void SetSocketTimeouts (int send_timeout, int receive_timeout, int keepalive_interval)
+		{
+			socket.SendTimeout = send_timeout;
+			socket.ReceiveTimeout = receive_timeout;
+			SendReceive (CommandSet.VM, (int)CmdVM.SET_KEEPALIVE, new PacketWriter ().WriteId (keepalive_interval));
 		}
 
 		/*

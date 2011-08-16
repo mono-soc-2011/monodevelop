@@ -25,19 +25,17 @@
 // THE SOFTWARE.
 
 using System;
-using System.Linq;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
-using Mono.CSharp;
 using System.Text;
-using Mono.TextEditor;
-using MonoDevelop.CSharp.Ast;
-using MonoDevelop.Projects.Dom;
-using MonoDevelop.Projects.Dom.Parser;
+using Mono.CSharp;
+using MonoDevelop.CSharp.Project;
 using MonoDevelop.CSharp.Resolver;
 using MonoDevelop.Projects;
-using MonoDevelop.CSharp.Project;
-using System.CodeDom;
+using MonoDevelop.Projects.Dom;
+using MonoDevelop.Projects.Dom.Parser;
+using System.Linq;
 
 namespace MonoDevelop.CSharp.Parser
 {
@@ -47,11 +45,11 @@ namespace MonoDevelop.CSharp.Parser
 		{
 			return new NewCSharpExpressionFinder (dom);
 		}
-
+		
 		public override IResolver CreateResolver (ProjectDom dom, object editor, string fileName)
 		{
 			MonoDevelop.Ide.Gui.Document doc = (MonoDevelop.Ide.Gui.Document)editor;
-			return new NRefactoryResolver (dom, doc.CompilationUnit, ICSharpCode.NRefactory.SupportedLanguage.CSharp, doc.Editor, fileName);
+			return new NRefactoryResolver (dom, doc.CompilationUnit, ICSharpCode.OldNRefactory.SupportedLanguage.CSharp, doc.Editor, fileName);
 		}
 		
 		public class ErrorReportPrinter : ReportPrinter
@@ -85,7 +83,7 @@ namespace MonoDevelop.CSharp.Parser
 				if (string.IsNullOrEmpty (content))
 					return null;
 				var tagComments = ProjectDomService.SpecialCommentTags.GetNames ();
-				List<string> compilerArguments = new List<string> ();
+				List<string > compilerArguments = new List<string> ();
 				if (dom != null && dom.Project != null && MonoDevelop.Ide.IdeApp.Workspace != null) {
 					DotNetProjectConfiguration configuration = dom.Project.GetConfiguration (MonoDevelop.Ide.IdeApp.Workspace.ActiveConfiguration) as DotNetProjectConfiguration;
 					CSharpCompilerParameters par = configuration != null ? configuration.CompilationParameters as CSharpCompilerParameters : null;
@@ -98,7 +96,7 @@ namespace MonoDevelop.CSharp.Parser
 						if (par.TreatWarningsAsErrors)
 							compilerArguments.Add ("-warnaserror");
 						if (!string.IsNullOrEmpty (par.NoWarnings))
-							compilerArguments.Add ("-nowarn:"+ string.Join (",", par.NoWarnings.Split (';', ',', ' ', '\t')));
+							compilerArguments.Add ("-nowarn:" + string.Join (",", par.NoWarnings.Split (';', ',', ' ', '\t')));
 						compilerArguments.Add ("-warn:" + par.WarningLevel);
 						compilerArguments.Add ("-langversion:" + GetLangString (par.LangVersion));
 						if (par.GenerateOverflowChecks)
@@ -106,7 +104,7 @@ namespace MonoDevelop.CSharp.Parser
 					}
 				}
 				
-				var unit =  new MonoDevelop.Projects.Dom.CompilationUnit (fileName);
+				var unit = new MonoDevelop.Projects.Dom.CompilationUnit (fileName);
 				var result = new ParsedDocument (fileName);
 				result.CompilationUnit = unit;
 				
@@ -117,7 +115,6 @@ namespace MonoDevelop.CSharp.Parser
 				}
 				if (top == null)
 					return null;
-				
 				foreach (var special in top.SpecialsBag.Specials) {
 					var comment = special as SpecialsBag.Comment;
 					if (comment != null) {
@@ -126,22 +123,19 @@ namespace MonoDevelop.CSharp.Parser
 						VisitPreprocessorDirective (result, special as SpecialsBag.PreProcessorDirective);
 					}
 				}
-				
 				// convert DOM
 				var conversionVisitor = new ConversionVisitor (top.LocationsBag);
-				conversionVisitor.Dom = dom;
-				conversionVisitor.ParsedDocument = result;
-				conversionVisitor.Unit = unit;
-				top.UsingsBag.Global.Accept (conversionVisitor);
-				top.ModuleCompiled.Accept (conversionVisitor);
-				/*
 				try {
-					unit.Tag = CSharpParser.Parse (top);
+					conversionVisitor.Dom = dom;
+					conversionVisitor.ParsedDocument = result;
+					conversionVisitor.Unit = unit;
+					top.UsingsBag.Global.Accept (conversionVisitor);
+					top.ModuleCompiled.Accept (conversionVisitor);
 				} catch (Exception ex) {
 					System.Console.WriteLine (ex);
-				}*/
-				
-				// parser errors
+				}
+				result.LanguageAST = new ICSharpCode.NRefactory.CSharp.CSharpParser().Parse (top, 0);
+				// parser errorse
 				errorReportPrinter.Errors.ForEach (e => conversionVisitor.ParsedDocument.Add (e));
 				return result;
 			}
@@ -205,7 +199,7 @@ namespace MonoDevelop.CSharp.Parser
 			conditionalRegions.Pop ();
 		}
 
-		static ICSharpCode.NRefactory.PrettyPrinter.CSharpOutputVisitor visitor = new ICSharpCode.NRefactory.PrettyPrinter.CSharpOutputVisitor ();
+		static ICSharpCode.OldNRefactory.PrettyPrinter.CSharpOutputVisitor visitor = new ICSharpCode.OldNRefactory.PrettyPrinter.CSharpOutputVisitor ();
 
 		void VisitPreprocessorDirective (ParsedDocument result, SpecialsBag.PreProcessorDirective directive)
 		{

@@ -137,7 +137,6 @@ namespace MonoDevelop.Projects.CodeGeneration
 			} while (t != null);
 			DomLocation lastLoc = DomLocation.Empty;
 			foreach (IUsing us in declaringType.CompilationUnit.Usings.Where (u => u.IsFromNamespace && u.ValidRegion.Contains (declaringType.Location))) {
-				Console.WriteLine (us);
 				if (lastLoc == us.Region.Start)
 					continue;
 				lastLoc = us.Region.Start;
@@ -152,7 +151,7 @@ namespace MonoDevelop.Projects.CodeGeneration
 				IndentLevel = CalculateBodyIndentLevel (implementingType);
 		}
 		
-		public string CreateInterfaceImplementation (IType implementingType, IType interfaceType, bool explicitly)
+		public string CreateInterfaceImplementation (IType implementingType, IType interfaceType, bool explicitly, bool wrapRegions = true)
 		{
 			SetIndentTo (implementingType);
 			StringBuilder result = new StringBuilder ();
@@ -165,7 +164,11 @@ namespace MonoDevelop.Projects.CodeGeneration
 					AppendLine (result);
 				}
 				string implementation = InternalCreateInterfaceImplementation (implementingType, baseInterface, explicitly, implementedMembers);
-				result.Append (WrapInRegions (baseInterface.Name + " implementation", implementation));
+				if (wrapRegions) {
+					result.Append (WrapInRegions (baseInterface.Name + " implementation", implementation));
+				} else {
+					result.Append (implementation);
+				}
 			}
 			return result.ToString ();
 		}

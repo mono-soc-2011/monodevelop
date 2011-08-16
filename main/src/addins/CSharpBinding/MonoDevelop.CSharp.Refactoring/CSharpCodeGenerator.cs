@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using MonoDevelop.CSharp.Ast;
+using ICSharpCode.NRefactory.CSharp;
 using MonoDevelop.Projects.Dom.Output;
 using MonoDevelop.Projects.Dom;
 using System.Text;
@@ -40,9 +40,9 @@ namespace MonoDevelop.CSharp.Refactoring
 		static CSharpAmbience ambience = new CSharpAmbience ();
 		
 		OutputVisitor visitor;
-		CSharpFormattingPolicy policy;
+		MonoDevelop.CSharp.Formatting.CSharpFormattingPolicy policy;
 		
-		public CSharpFormattingPolicy Policy {
+		public MonoDevelop.CSharp.Formatting.CSharpFormattingPolicy Policy {
 			get {
 				return this.policy;
 			}
@@ -455,8 +455,8 @@ namespace MonoDevelop.CSharp.Refactoring
 						}
 					}
 				}
-				if (!isFromInterface && ((member.Modifiers & Modifiers.Virtual) == Modifiers.Virtual || 
-					(member.Modifiers & Modifiers.Abstract) == Modifiers.Abstract))
+				if (!isFromInterface && ((member.Modifiers & MonoDevelop.Projects.Dom.Modifiers.Virtual) == MonoDevelop.Projects.Dom.Modifiers.Virtual || 
+					(member.Modifiers & MonoDevelop.Projects.Dom.Modifiers.Abstract) == MonoDevelop.Projects.Dom.Modifiers.Abstract))
 					result.Append ("override ");
 			}
 			
@@ -543,14 +543,14 @@ namespace MonoDevelop.CSharp.Refactoring
 				return member.DeclaringType.Attributes.Any (attr => attr.AttributeType != null && attr.AttributeType.FullName == "MonoTouch.Foundation.ModelAttribute");
 			}
 		}
-
-		public override string CreateFieldEncapsulation (IType implementingType, IField field, string propertyName, Modifiers modifiers, bool readOnly)
+		
+		public override string CreateFieldEncapsulation (IType implementingType, IField field, string propertyName, MonoDevelop.Projects.Dom.Modifiers modifiers, bool readOnly)
 		{
 			SetIndentTo (implementingType);
 			StringBuilder result = new StringBuilder ();
 			AppendIndent (result);
 			
-			if (modifiers != Modifiers.None) {
+			if (modifiers != MonoDevelop.Projects.Dom.Modifiers.None) {
 				result.Append (ambience.GetString (modifiers));
 				result.Append (" ");
 			}

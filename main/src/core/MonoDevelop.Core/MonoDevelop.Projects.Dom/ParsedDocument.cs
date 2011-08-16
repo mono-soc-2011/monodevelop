@@ -123,6 +123,29 @@ namespace MonoDevelop.Projects.Dom
 			}
 		}
 		
+		public object LanguageAST {
+			get;
+			set;
+		}
+		
+		Dictionary<System.Type, object> tags = new Dictionary<System.Type, object> ();
+
+		public bool TryGetTag<T> (out T tag)
+		{
+			object o;
+			if (tags.TryGetValue (typeof(T), out o)) {
+				tag = (T)o;
+				return true;
+			}
+			tag = default (T);
+			return false;
+		}
+		
+		public void SetTag<T> (T tag)
+		{
+			tags [typeof(T)] = tag;;
+		}
+		
 		public ICompilationUnit CompilationUnit { get; set; }
 		
 		public virtual IEnumerable<FoldingRegion> GenerateFolds ()

@@ -334,6 +334,12 @@ namespace MonoDevelop.SourceEditor
 		
 		void DisposeErrorMarkers ()
 		{
+			//the window has a reference to the markers we're destroying
+			//so if the error markers get cleared out while it's running, its expose will
+			//NRE and bring down MD
+			if (messageBubbleHighlightPopupWindow != null)
+				messageBubbleHighlightPopupWindow.Destroy ();
+			
 			currentErrorMarkers.ForEach (em => {
 				widget.Document.RemoveMarker (em);
 				em.Dispose ();
@@ -489,6 +495,10 @@ namespace MonoDevelop.SourceEditor
 				WorkbenchWindow.DocumentChanged += delegate {
 					if (WorkbenchWindow.Document == null)
 						return;
+					foreach (var provider in WorkbenchWindow.Document.GetContents<IQuickTaskProvider> ()) {
+						widget.AddQuickTaskProvider (provider);
+					}
+					
 					WorkbenchWindow.Document.DocumentParsed += delegate(object sender, EventArgs e) {
 						widget.UpdateParsedDocument (WorkbenchWindow.Document.ParsedDocument);
 					};
@@ -736,7 +746,7 @@ namespace MonoDevelop.SourceEditor
 		
 		void OnTextReplacing (object s, ReplaceEventArgs a)
 		{
-			if (a.Count > 0)  {
+			if (a.Count > 0 && a.Offset >= 0 && a.Offset + a.Count <= widget.TextEditor.Length)  {
 				oldReplaceText = widget.TextEditor.Document.GetTextAt (a.Offset, a.Count);
 			} else {
 				oldReplaceText = "";

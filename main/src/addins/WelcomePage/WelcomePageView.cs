@@ -99,23 +99,35 @@ namespace MonoDevelop.WelcomePage
 		
 		static string NewsFile {
 			get {
-				return PropertyService.Locations.Cache.Combine ("WelcomePageNews.xml");
+				return UserProfile.Current.CacheDir.Combine ("WelcomePageNews.xml");
 			}
+		}
+		
+		static XmlReaderSettings GetSafeReaderSettings ()
+		{
+			//allow DTD but not try to resolve it from web
+			return new XmlReaderSettings () {
+				CloseInput = true,
+				ProhibitDtd = false,
+				XmlResolver = null,
+			};
 		}
 		
 		public XmlDocument GetUpdatedXmlDocument ()
 		{
 			string localCachedNewsFile = NewsFile;
+			var settings = GetSafeReaderSettings ();
 			
-			Stream stream = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("WelcomePageContent.xml");
-			XmlDocument contentDoc = new XmlDocument ();
-			using (XmlTextReader reader = new XmlTextReader (stream))
+			var stream = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("WelcomePageContent.xml");
+			var contentDoc = new XmlDocument ();
+			using (var reader = XmlReader.Create (stream, settings))
 				contentDoc.Load (reader);
 			
 			try {
 				if (File.Exists (localCachedNewsFile)) {
-					XmlDocument updateDoc = new XmlDocument (); 
-					using (XmlTextReader reader = new XmlTextReader (localCachedNewsFile))
+					var updateDoc = new XmlDocument ();
+
+					using (var reader = XmlReader.Create (localCachedNewsFile, settings))
 						updateDoc.Load (reader);
 					
 					XmlNode oNodeWhereInsert =
@@ -124,7 +136,9 @@ namespace MonoDevelop.WelcomePage
 						oNodeWhereInsert.AppendChild (contentDoc.ImportNode (link,true)); 
 				}
 			} catch (Exception ex) {
-				LoggingService.LogError ("Error updating Welcome Page content.", ex);
+				LoggingService.LogError ("Error reading Welcome Page content file.", ex);
+				if (File.Exists (localCachedNewsFile))
+					File.Delete (localCachedNewsFile);
 			}
 			
 			return contentDoc;
@@ -136,20 +150,39 @@ namespace MonoDevelop.WelcomePage
 			string netNewsXml = WelcomePageView.netNewsXml;
 			LoggingService.LogInfo ("Updating Welcome Page from '{0}'.", netNewsXml);
 			
-			HttpWebRequest request = (HttpWebRequest) WebRequest.Create (netNewsXml);
+			var request = (HttpWebRequest) WebRequest.Create (netNewsXml);
 			string localCachedNewsFile = NewsFile;
-			FileInfo localNewsXml = new FileInfo (localCachedNewsFile);
+			var localNewsXml = new FileInfo (localCachedNewsFile);
 			if (localNewsXml.Exists)
 				request.IfModifiedSince = localNewsXml.LastWriteTime;
 			
 			try {
 				request.BeginGetResponse (delegate (IAsyncResult ar) {
 					try {
+						var tempFile = localCachedNewsFile + ".temp";
+						//FIXME: limit this size in case open wifi hotspots provide bad data
 						var response = (HttpWebResponse) request.EndGetResponse (ar);
 						if (response.StatusCode == HttpStatusCode.OK) {
-							using (var fs = File.Create (localCachedNewsFile))
+							using (var fs = File.Create (tempFile))
 								response.GetResponseStream ().CopyTo (fs, 2048);
 						}
+						
+						//check the document is valid, might get bad ones from wifi hotspots etc
+						try {
+							var updateDoc = new XmlDocument ();
+							using (var reader = XmlReader.Create (tempFile, GetSafeReaderSettings ()))
+								updateDoc.Load (reader);
+							updateDoc.SelectSingleNode ("/links");
+						} catch (Exception ex) {
+							LoggingService.LogWarning ("Welcome Page news file is bad, keeping old version.", ex);
+							File.Delete (tempFile);
+							return;
+						}
+						
+						if (File.Exists (localCachedNewsFile))
+							File.Delete (localCachedNewsFile);
+						File.Move (tempFile, localCachedNewsFile);
+						
 						NewsUpdated (null, EventArgs.Empty);
 					} catch (System.Net.WebException wex) {
 						var httpResp = wex.Response as HttpWebResponse;

@@ -57,7 +57,7 @@ namespace MonoDevelop.Core
 			Counters.RuntimeInitialization.BeginTiming ();
 			SetupInstrumentation ();
 			
-			if (PropertyService.IsMac)
+			if (Platform.IsMac)
 				InitMacFoundation ();
 			
 			// Set a default sync context
@@ -68,12 +68,17 @@ namespace MonoDevelop.Core
 			AddinManager.AddinLoaded += OnLoad;
 			AddinManager.AddinUnloaded += OnUnload;
 			
+			//provides a development-time way to load addins that are being developed in a asperate solution
+			var devAddinDir = Environment.GetEnvironmentVariable ("MONODEVELOP_DEV_ADDINS");
+			if (devAddinDir != null && devAddinDir.Length == 0)
+				devAddinDir = null;
+			
 			try {
 				Counters.RuntimeInitialization.Trace ("Initializing Addin Manager");
 				AddinManager.Initialize (
-					PropertyService.Locations.Config,
-					PropertyService.Locations.Addins,
-					PropertyService.Locations.Cache);
+					UserProfile.Current.ConfigDir,
+					devAddinDir ?? UserProfile.Current.LocalInstallDir,
+					devAddinDir ?? UserProfile.Current.CacheDir);
 				AddinManager.InitializeDefaultLocalizer (new DefaultAddinLocalizer ());
 				
 				if (updateAddinRegistry)
@@ -134,9 +139,9 @@ namespace MonoDevelop.Core
 		internal static string GetRepoUrl (string quality)
 		{
 			string platform;
-			if (PropertyService.IsWindows)
+			if (Platform.IsWindows)
 				platform = "Win32";
-			else if (PropertyService.IsMac)
+			else if (Platform.IsMac)
 				platform = "Mac";
 			else
 				platform = "Linux";

@@ -261,7 +261,7 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 			try {
 				timer.Trace ("Create item instance");
 				ProjectExtensionUtil.BeginLoadOperation ();
-				Item = CreateSolutionItem (language, projectTypeGuids, itemType, itemClass);
+				Item = CreateSolutionItem (p, fileName, language, projectTypeGuids, itemType, itemClass);
 	
 				Item.SetItemHandler (this);
 				MSBuildProjectService.SetId (Item, itemGuid);
@@ -285,10 +285,10 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 			set { useXBuild = value; }
 		}
 		
-		SolutionItem CreateSolutionItem (string language, string typeGuids, string itemType, Type itemClass)
+		// All of the last 4 parameters are optional, but at least one must be provided.
+		SolutionItem CreateSolutionItem (MSBuildProject p, string fileName, string language, string typeGuids,
+			string itemType, Type itemClass)
 		{
-			// All the parameters are optional, but at least one must be provided.
-			
 			SolutionItem item = null;
 			
 			if (!string.IsNullOrEmpty (typeGuids)) {
@@ -296,6 +296,27 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 				if (st != null) {
 					item = st.CreateInstance (language);
 					useXBuild = useXBuild || st.UseXBuild;
+					if (st.IsMigration) {
+						if (!st.MigrationHandler.Migrate (p, fileName, language))
+							throw new Exception ("Could not migrate project");
+						
+						var oldSt = st;
+						st = MSBuildProjectService.GetItemSubtypeNodes ()
+							.Where (t => t.CanHandleItem ((SolutionEntityItem)item)).Last ();
+						for (int i = 0; i < subtypeGuids.Count; i++) {
+							if (string.Equals (subtypeGuids[i], oldSt.Guid, StringComparison.OrdinalIgnoreCase)) {
+								subtypeGuids[i] = st.Guid;
+								oldSt = null;
+								break;
+							}
+						}
+						if (oldSt != null)
+							throw new Exception ("Unable to correct flavor GUID");
+						var gg = string.Join (";", subtypeGuids) + ";" + TypeGuid;
+						p.GetGlobalPropertyGroup ().SetPropertyValue ("ProjectTypeGuids", gg.ToUpper ());
+						fileContent = p.Save ();
+						MonoDevelop.Projects.Text.TextFile.WriteFile (fileName, fileContent, "UTF-8");
+					}
 					st.UpdateImports ((SolutionEntityItem)item, targetImports);
 				} else
 					throw new UnknownSolutionItemTypeException (typeGuids);
@@ -315,13 +336,6 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 					throw new UnknownSolutionItemTypeException (itemType);
 					
 				item = (SolutionItem) Activator.CreateInstance (dt.ValueType);
-			}
-			
-			// Basic initialization
-			
-			if (item is DotNetProject) {
-				DotNetProject p = (DotNetProject) item;
-				p.TargetFramework = Services.ProjectService.DefaultTargetFramework;
 			}
 			return item;
 		}
@@ -528,9 +542,19 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 						else if (asm == "system")
 							asm = "System";
 						pref = new ProjectReference (ReferenceType.Gac, asm);
+						pref.LocalCopy = false;
 					}
 					pref.Condition = buildItem.Condition;
-					pref.SpecificVersion = !buildItem.GetMetadataIsFalse ("SpecificVersion");
+					string specificVersion = buildItem.GetMetadata ("SpecificVersion");
+					if (string.IsNullOrWhiteSpace (specificVersion)) {
+						// If the SpecificVersion element isn't present, check if the Assembly Reference specifies a Version
+						pref.SpecificVersion = ReferenceStringHasVersion (buildItem.Include);
+					}
+					else {
+						bool value;
+						// if we can't parse the value, default to false which is more permissive
+						pref.SpecificVersion = bool.TryParse (specificVersion, out value) && value;
+					}
 					ReadBuildItemMetadata (ser, buildItem, pref, typeof(ProjectReference));
 					return pref;
 				}
@@ -560,6 +584,12 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 			ReadBuildItemMetadata (ser, buildItem, uitem, typeof(UnknownProjectItem));
 			
 			return uitem;
+		}
+		
+		bool ReferenceStringHasVersion (string asmName)
+		{
+			int commaPos = asmName.IndexOf (',');
+			return commaPos >= 0 && asmName.IndexOf ("Version", commaPos) >= 0;
 		}
 
 		bool IsValidFile (string path)
@@ -895,7 +925,7 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 			
 			// Don't save the file to disk if the content did not change
 			if (txt != fileContent) {
-				File.WriteAllText (eitem.FileName, txt);
+				MonoDevelop.Projects.Text.TextFile.WriteFile (eitem.FileName, txt, "UTF-8");
 				fileContent = txt;
 				
 				if (projectBuilder != null)
@@ -1072,7 +1102,7 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 						include = include.Substring (0, i).Trim ();
 				}
 				buildItem = AddOrGetBuildItem (msproject, oldItems, "Reference", include);
-				if (!pref.SpecificVersion)
+				if (!pref.SpecificVersion && ReferenceStringHasVersion (include))
 					buildItem.SetMetadata ("SpecificVersion", "False");
 				else
 					buildItem.UnsetMetadata ("SpecificVersion");

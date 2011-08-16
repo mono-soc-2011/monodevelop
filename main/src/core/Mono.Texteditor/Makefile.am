@@ -21,6 +21,7 @@ FILES =  \
 	Mono.TextEditor.Highlighting/Chunk.cs \
 	Mono.TextEditor.Highlighting/ChunkStyle.cs \
 	Mono.TextEditor.Highlighting/CloneableStack.cs \
+	Mono.TextEditor.Highlighting/ColorSheme.cs \
 	Mono.TextEditor.Highlighting/DefaultStyle.cs \
 	Mono.TextEditor.Highlighting/HighlightingPartitioner.cs \
 	Mono.TextEditor.Highlighting/IXmlProvider.cs \
@@ -33,7 +34,6 @@ FILES =  \
 	Mono.TextEditor.Highlighting/Rule.cs \
 	Mono.TextEditor.Highlighting/SemanticRule.cs \
 	Mono.TextEditor.Highlighting/Span.cs \
-	Mono.TextEditor.Highlighting/Style.cs \
 	Mono.TextEditor.Highlighting/SyntaxMode.cs \
 	Mono.TextEditor.Highlighting/SyntaxModeService.cs \
 	Mono.TextEditor.Highlighting/XmlReadHelper.cs \
@@ -92,6 +92,7 @@ FILES =  \
 	Mono.TextEditor/FoldSegment.cs \
 	Mono.TextEditor/GapBuffer.cs \
 	Mono.TextEditor/GutterMargin.cs \
+	Mono.TextEditor/HeightTree.cs \
 	Mono.TextEditor/HelperMethods.cs \
 	Mono.TextEditor/HslColor.cs \
 	Mono.TextEditor/IAnimationDrawer.cs \
@@ -150,6 +151,8 @@ RES =  \
 	gtk-gui/gui.stetic \
 	Styles/BrownStyle.xml \
 	Styles/C64Style.xml \
+	Styles/DefaultStyle.xml \
+	Styles/GeditStyle.xml \
 	Styles/IrBlackStyle.xml \
 	Styles/OblivionStyle.xml \
 	Styles/Styles.xsd \

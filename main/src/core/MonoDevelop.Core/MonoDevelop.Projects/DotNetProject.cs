@@ -136,7 +136,7 @@ namespace MonoDevelop.Projects
 			}
 
 			if ((projectOptions != null) && (projectOptions.Attributes["TargetFrameworkVersion"] != null))
-				targetFrameworkId = TargetFrameworkMoniker.Parse (projectOptions.Attributes["TargetFrameworkVersion"].Value);
+				newProjectTargetFrameworkId = TargetFrameworkMoniker.Parse (projectOptions.Attributes["TargetFrameworkVersion"].Value);
 
 			string binPath;
 			if (projectCreateInfo != null) {
@@ -275,25 +275,30 @@ namespace MonoDevelop.Projects
 				return resourceHandler;
 			}
 		}
-
-		TargetFrameworkMoniker targetFrameworkId;
+		
+		//only used for initializing new projects
+		TargetFrameworkMoniker newProjectTargetFrameworkId;
+		
 		TargetFramework targetFramework;
 
 		public TargetFramework TargetFramework {
 			get {
-				SetDefaultFramework ();
+				if (targetFramework == null) {
+					var id = newProjectTargetFrameworkId ?? GetDefaultTargetFrameworkId ();
+					targetFramework = Runtime.SystemAssemblyService.GetTargetFramework (id);
+				}
 				return targetFramework;
 			}
 			set {
-				bool replacingValue = targetFramework != null;
-				TargetFramework validValue = GetValidFrameworkVersion (value);
-				if (targetFramework == null && validValue == null)
-					targetFramework = Services.ProjectService.DefaultTargetFramework;
-				if (targetFramework == validValue || validValue == null)
+				if (!SupportsFramework (value))
+					throw new ArgumentException ("Project does not support framework '" + value.Id.ToString () +"'");
+				if (value == null)
+					value = Runtime.SystemAssemblyService.GetTargetFramework (GetDefaultTargetFrameworkId ());
+				if (value.Id == targetFramework.Id)
 					return;
-				targetFramework = validValue;
-				targetFrameworkId = validValue.Id;
-				if (replacingValue)
+				bool updateReferences = targetFramework != null;
+				targetFramework = value;
+				if (updateReferences)
 					UpdateSystemReferences ();
 				NotifyModified ("TargetFramework");
 			}
@@ -305,7 +310,7 @@ namespace MonoDevelop.Projects
 		
 		public virtual TargetFrameworkMoniker GetDefaultTargetFrameworkId ()
 		{
-			return ProjectService.DefaultTargetFrameworkId;
+			return Services.ProjectService.DefaultTargetFramework.Id;
 		}
 
 		public IAssemblyContext AssemblyContext {
@@ -325,16 +330,6 @@ namespace MonoDevelop.Projects
 				if (privateAssemblyContext == null)
 					privateAssemblyContext = new DirectoryAssemblyContext ();
 				return privateAssemblyContext;
-			}
-		}
-
-		void SetDefaultFramework ()
-		{
-			if (targetFramework == null) {
-				if (targetFrameworkId != null)
-					targetFramework = Runtime.SystemAssemblyService.GetTargetFramework (targetFrameworkId);
-				if (targetFramework == null)
-					TargetFramework = Services.ProjectService.DefaultTargetFramework;
 			}
 		}
 
@@ -519,7 +514,7 @@ namespace MonoDevelop.Projects
 
 		void PopulateSupportFileListInternal (FileCopySet list, ConfigurationSelector configuration)
 		{
-			if (supportReferDistance < 2)
+			if (supportReferDistance <= 2)
 				base.PopulateSupportFileList (list, configuration);
 
 			//rename the app.config file
@@ -749,7 +744,8 @@ namespace MonoDevelop.Projects
 		{
 			// Make sure the fx version is sorted out before saving
 			// to avoid changes in project references while saving 
-			SetDefaultFramework ();
+			if (targetFramework == null)
+				targetFramework = Runtime.SystemAssemblyService.GetTargetFramework (GetDefaultTargetFrameworkId ());
 			base.OnSave (monitor);
 		}
 
@@ -839,7 +835,7 @@ namespace MonoDevelop.Projects
 			DotNetExecutionCommand cmd = new DotNetExecutionCommand (configuration.CompiledOutputName);
 			cmd.Arguments = configuration.CommandLineParameters;
 			cmd.WorkingDirectory = Path.GetDirectoryName (configuration.CompiledOutputName);
-			cmd.EnvironmentVariables = new Dictionary<string, string> (configuration.EnvironmentVariables);
+			cmd.EnvironmentVariables = configuration.GetParsedEnvironmentVariables ();
 			cmd.TargetRuntime = TargetRuntime;
 			cmd.UserAssemblyPaths = GetUserAssemblyPaths (configSel);
 			return cmd;
@@ -962,27 +958,17 @@ namespace MonoDevelop.Projects
 		// Make sure that the project references are valid for the target clr version.
 		void UpdateSystemReferences ()
 		{
-			ArrayList toDelete = new ArrayList ();
-			ArrayList toAdd = new ArrayList ();
-
 			foreach (ProjectReference pref in References) {
 				if (pref.ReferenceType == ReferenceType.Gac) {
 					string newRef = AssemblyContext.GetAssemblyNameForVersion (pref.Reference, pref.Package != null ? pref.Package.Name : null, this.TargetFramework);
 					if (newRef == null) {
 						pref.ResetReference ();
 					} else if (newRef != pref.Reference) {
-						toDelete.Add (pref);
-						toAdd.Add (new ProjectReference (ReferenceType.Gac, newRef));
+						pref.Reference = newRef;
 					} else if (!pref.IsValid) {
 						pref.ResetReference ();
 					}
 				}
-			}
-			foreach (ProjectReference pref in toDelete) {
-				References.Remove (pref);
-			}
-			foreach (ProjectReference pref in toAdd) {
-				References.Add (pref);
 			}
 		}
 

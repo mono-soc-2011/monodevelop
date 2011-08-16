@@ -83,17 +83,40 @@ namespace Mono.TextEditor
 		
 		public TextEditorData () : this (new Document ())
 		{
-			
 		}
 		
 		public TextEditorData (Document doc)
 		{
+			LineHeight = 16;
+			
 			caret = new Caret (this);
 			caret.PositionChanged += CaretPositionChanged;
 			
 			options = TextEditorOptions.DefaultOptions;
 			Document = doc;
 			this.SearchEngine = new BasicSearchEngine ();
+			
+			this.heightTree = new HeightTree (this);
+			this.heightTree.Rebuild ();
+		}
+
+		void HandleDocTextSet (object sender, EventArgs e)
+		{
+			this.heightTree.Rebuild ();
+		}
+
+		public double GetLineHeight (LineSegment line)
+		{
+			if (Parent == null)
+				return LineHeight;
+			return Parent.GetLineHeight (line);
+		}
+		
+		public double GetLineHeight (int line)
+		{
+			if (Parent == null)
+				return LineHeight;
+			return Parent.GetLineHeight (line);
 		}
 
 		void HandleDocLineChanged (object sender, LineEventArgs e)
@@ -107,6 +130,7 @@ namespace Mono.TextEditor
 				return document;
 			}
 			set {
+				DetachDocument ();
 				this.document = value;
 				this.document.BeginUndo += OnBeginUndo;
 				this.document.EndUndo += OnEndUndo;
@@ -114,7 +138,24 @@ namespace Mono.TextEditor
 				this.document.Undone += DocumentHandleUndone;
 				this.document.Redone += DocumentHandleRedone;
 				this.document.LineChanged += HandleDocLineChanged;
+				
+				this.document.TextSet += HandleDocTextSet;
+				this.document.Folded += HandleTextEditorDataDocumentFolded;
+				this.document.FoldTreeUpdated += HandleTextEditorDataDocumentFoldTreeUpdated;
+				
+				this.document.splitter.LineInserted += HandleDocumentsplitterhandleLineInserted;
+				this.document.splitter.LineRemoved += HandleDocumentsplitterhandleLineRemoved;
 			}
+		}
+
+		void HandleDocumentsplitterhandleLineRemoved (object sender, LineEventArgs e)
+		{
+			heightTree.RemoveLine (OffsetToLineNumber (e.Line.Offset));
+		}
+
+		void HandleDocumentsplitterhandleLineInserted (object sender, LineEventArgs e)
+		{
+			heightTree.InsertLine (OffsetToLineNumber (e.Line.Offset));
 		}
 
 		/// <value>
@@ -122,12 +163,12 @@ namespace Mono.TextEditor
 		/// if no eol mark is found it's using the default (Environment.NewLine).
 		/// The value is saved, even when all lines are deleted the eol marker will still be the old eol marker.
 		/// </value>
-		string eol = null;
 		public string EolMarker {
 			get {
 				if (Options.OverrideDocumentEolMarker)
 					return Options.DefaultEolMarker;
-				if (eol == null && Document.LineCount > 0) {
+				string eol = null;
+				if (Document.LineCount > 0) {
 					LineSegment line = Document.GetLine (DocumentLocation.MinLine);
 					if (line.DelimiterLength > 0) 
 						eol = Document.GetTextAt (line.EditableLength, line.DelimiterLength);
@@ -151,8 +192,8 @@ namespace Mono.TextEditor
 			}
 		}
 		
-		Mono.TextEditor.Highlighting.Style colorStyle;
-		public Mono.TextEditor.Highlighting.Style ColorStyle {
+		Mono.TextEditor.Highlighting.ColorSheme colorStyle;
+		public Mono.TextEditor.Highlighting.ColorSheme ColorStyle {
 			get {
 				return colorStyle;
 			}
@@ -183,8 +224,9 @@ namespace Mono.TextEditor
 				return "";
 			StringBuilder sb = new StringBuilder ();
 			bool convertTabs = Options.TabsToSpaces;
+			
 			for (int i = 0; i < str.Length; i++) {
-				char ch = str[i];
+				char ch = str [i];
 				switch (ch) {
 				case '\u00A0': // convert non breaking spaces to standard spaces.
 					sb.Append (' ');
@@ -198,7 +240,7 @@ namespace Mono.TextEditor
 						goto default;
 					break;
 				case '\r':
-					if (i + 1 < str.Length && str[i + 1] == '\n')
+					if (i + 1 < str.Length && str [i + 1] == '\n')
 						i++;
 					goto case '\n';
 				case '\n':
@@ -238,21 +280,28 @@ namespace Mono.TextEditor
 			Caret.Offset = offset + length;
 			Document.EndAtomicUndo ();
 		}
-		
+
+		void DetachDocument ()
+		{
+			if (document == null) 
+				return;
+			document.LineChanged -= HandleDocLineChanged;
+			document.BeginUndo -= OnBeginUndo;
+			document.EndUndo -= OnEndUndo;
+			document.Undone -= DocumentHandleUndone;
+			document.Redone -= DocumentHandleRedone;
+			document.TextSet -= HandleDocTextSet;
+			document.Folded -= HandleTextEditorDataDocumentFolded;
+			document.FoldTreeUpdated -= HandleTextEditorDataDocumentFoldTreeUpdated;
+			
+			document = null;
+		}
+
 		public void Dispose ()
 		{
 			options = options.Kill ();
 			
-			if (document != null) {
-				document.LineChanged -= HandleDocLineChanged;
-				document.BeginUndo -= OnBeginUndo;
-				document.EndUndo   -= OnEndUndo;
-				document.Undone -= DocumentHandleUndone;
-				document.Redone -= DocumentHandleRedone;
-				
-				// DOCUMENT MUST NOT BE DISPOSED !!! (Split View shares document)
-				document = null;
-			}
+			DetachDocument ();
 			if (caret != null) {
 				caret.PositionChanged -= CaretPositionChanged;
 				caret = null;
@@ -469,17 +518,17 @@ namespace Mono.TextEditor
 			}
 		}
 		
-		public DocumentLocation LogicalToVisualLocation (DocumentLocation location)
-		{
-			return Document.LogicalToVisualLocation (this, location);
-		}
-		
-		public DocumentLocation VisualToLogicalLocation (DocumentLocation location)
-		{
-			int line = Document.VisualToLogicalLine (location.Line);
-			int column = Document.GetLine (line).GetVisualColumn (this, location.Column);
-			return new DocumentLocation (line, column);
-		}
+//		public DocumentLocation LogicalToVisualLocation (DocumentLocation location)
+//		{
+//			return LogicalToVisualLocation (this, location);
+//		}
+//		
+//		public DocumentLocation VisualToLogicalLocation (DocumentLocation location)
+//		{
+//			int line = VisualToLogicalLine (location.Line);
+//			int column = Document.GetLine (line).GetVisualColumn (this, location.Column);
+//			return new DocumentLocation (line, column);
+//		}
 		public int SelectionAnchor {
 			get {
 				if (MainSelection == null)
@@ -585,6 +634,11 @@ namespace Mono.TextEditor
 		public void SetSelection (DocumentLocation anchor, DocumentLocation lead)
 		{
 			MainSelection = new Selection (anchor, lead);
+		}
+
+		public void SetSelection (int anchorLine, int anchorColumn, int leadLine, int leadColumn)
+		{
+			SetSelection (new DocumentLocation (anchorLine, anchorColumn), new DocumentLocation (leadLine, leadColumn));
 		}
 
 		public void ExtendSelectionTo (int offset)
@@ -1079,6 +1133,104 @@ namespace Mono.TextEditor
 				Caret.Location = new DocumentLocation (line, column);
 			}
 		}
+		#endregion
+		
+		#region folding
+		
+		public double LineHeight {
+			get;
+			internal set;
+		}
+		
+		public int VisibleLineCount {
+			get {
+				return heightTree.VisibleLineCount;
+			}
+		}	
+		
+		
+		public double TotalHeight {
+			get {
+				return heightTree.TotalHeight;
+			}
+		}
+		
+		internal HeightTree heightTree;
+		
+		public DocumentLocation LogicalToVisualLocation (DocumentLocation location)
+		{
+			int line = LogicalToVisualLine (location.Line);
+			LineSegment lineSegment = this.GetLine (location.Line);
+			int column = lineSegment != null ? lineSegment.GetVisualColumn (this, location.Column) : location.Column;
+			return new DocumentLocation (line, column);
+		}
+
+		public int LogicalToVisualLine (int logicalLine)
+		{
+			return heightTree.LogicalToVisualLine (logicalLine);
+		}
+
+		public int VisualToLogicalLine (int visualLineNumber)
+		{
+			return heightTree.VisualToLogicalLine (visualLineNumber);
+		}
+		
+		void HandleTextEditorDataDocumentFoldTreeUpdated (object sender, EventArgs e)
+		{
+			heightTree.Rebuild ();
+		}
+
+		void HandleTextEditorDataDocumentFolded (object sender, FoldSegmentEventArgs e)
+		{
+			int start = OffsetToLineNumber (e.FoldSegment.StartLine.Offset);
+			int end = OffsetToLineNumber (e.FoldSegment.EndLine.Offset);
+			
+			if (e.FoldSegment.IsFolded) {
+				if (e.FoldSegment.Marker != null)
+					heightTree.Unfold (e.FoldSegment.Marker, start, end - start);
+				e.FoldSegment.Marker = heightTree.Fold (start, end - start);
+			} else {
+				heightTree.Unfold (e.FoldSegment.Marker, start, end - start);
+				e.FoldSegment.Marker = null;
+			}
+		}
+		
+		#endregion
+	
+	
+		#region SkipChars
+		public class SkipChar
+		{
+			
+			public int Start { get; set; }
+			
+			public int Offset { get; set; }
+
+			public char Char  { get; set; }
+
+			public override string ToString ()
+			{
+				return string.Format ("[SkipChar: Start={0}, Offset={1}, Char={2}]", Start, Offset, Char);
+			}
+		}
+		
+		List<SkipChar> skipChars = new List<SkipChar> ();
+		
+		public List<SkipChar> SkipChars {
+			get {
+				return skipChars;
+			}
+		}
+		
+		public void SetSkipChar (int offset, char ch)
+		{
+			skipChars.Add (new SkipChar () {
+				Start = offset - 1,
+				Offset = offset,
+				Char = ch
+			});
+		}
+		
 		#endregion
 	}
 }

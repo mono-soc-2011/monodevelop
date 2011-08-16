@@ -69,7 +69,6 @@ namespace Mono.TextEditor
 		uint lastIMEventMappedChar;
 		Gdk.ModifierType lastIMEventMappedModifier;
 		bool imContextActive;
-		
 		string currentStyleName;
 		
 		double mx, my;
@@ -96,6 +95,7 @@ namespace Mono.TextEditor
 				textEditorData.Document.MarkerRemoved += HandleTextEditorDataDocumentMarkerChange;
 			}
 		}
+
 		
 		public Mono.TextEditor.Caret Caret {
 			get {
@@ -137,6 +137,11 @@ namespace Mono.TextEditor
 
 		void HandleTextEditorDataDocumentMarkerChange (object sender, TextMarkerEvent e)
 		{
+			if (e.TextMarker is IExtendingTextMarker) {
+				int lineNumber = OffsetToLineNumber (e.Line.Offset);
+				textEditorData.heightTree.SetLineHeight (lineNumber, GetLineHeight (e.Line));
+			}
+			
 			TextViewMargin.RemoveCachedLine (e.Line);
 			Document.CommitLineUpdate (e.Line);
 		}
@@ -251,11 +256,7 @@ namespace Mono.TextEditor
 				CenterToCaret ();
 				StartCaretPulseAnimation ();
 			};
-			doc.TextReplaced += OnDocumentStateChanged;
-			doc.TextSet += OnTextSet;
-			doc.LineChanged += UpdateLinesOnTextMarkerHeightChange; 
-			doc.MarkerAdded += HandleTextEditorDataDocumentMarkerChange;
-			doc.MarkerRemoved += HandleTextEditorDataDocumentMarkerChange;
+			this.Document = doc;
 
 			textEditorData.CurrentMode = initialMode;
 			
@@ -600,6 +601,7 @@ namespace Mono.TextEditor
 				margin.OptionsChanged ();
 			}
 			SetAdjustments (Allocation);
+			textEditorData.heightTree.Rebuild ();
 			this.QueueResize ();
 		}
 		
@@ -1178,9 +1180,10 @@ namespace Mono.TextEditor
 
 		public double LineHeight {
 			get {
-				if (this.textViewMargin == null)
-					return 16;
-				return this.textViewMargin.LineHeight;
+				return this.textEditorData.LineHeight;
+			}
+			internal set {
+				this.textEditorData.LineHeight = value;
 			}
 		}
 		
@@ -1196,7 +1199,7 @@ namespace Mono.TextEditor
 		
 		public DocumentLocation LogicalToVisualLocation (DocumentLocation location)
 		{
-			return Document.LogicalToVisualLocation (this.textEditorData, location);
+			return textEditorData.LogicalToVisualLocation (location);
 		}
 		
 		public void CenterToCaret ()
@@ -1341,6 +1344,8 @@ namespace Mono.TextEditor
 		
 		void SetHAdjustment ()
 		{
+			textEditorData.heightTree.Rebuild ();
+			
 			if (textEditorData.HAdjustment == null)
 				return;
 			textEditorData.HAdjustment.ValueChanged -= HAdjustmentValueChanged;
@@ -1361,15 +1366,16 @@ namespace Mono.TextEditor
 			SetAdjustments (Allocation);
 		}
 		
+		public const int EditorLineThreshold = 5;
+
 		internal void SetAdjustments (Gdk.Rectangle allocation)
 		{
+			SetHAdjustment ();
+			
 			if (this.textEditorData.VAdjustment != null) {
-				double maxY = Document.LineCount > 1 ? LineToY (Document.LineCount) : 0;
-				
-				maxY += LineHeight;
-				
+				double maxY = textEditorData.heightTree.TotalHeight;
 				if (maxY > allocation.Height)
-					maxY += 5 * this.LineHeight;
+					maxY += EditorLineThreshold * this.LineHeight;
 				
 				this.textEditorData.VAdjustment.SetBounds (0, 
 				                                           maxY, 
@@ -1379,7 +1385,6 @@ namespace Mono.TextEditor
 				if (maxY < allocation.Height)
 					this.textEditorData.VAdjustment.Value = 0;
 			}
-			SetHAdjustment ();
 		}
 		
 		public int GetWidth (string text)
@@ -1459,7 +1464,7 @@ namespace Mono.TextEditor
 		
 		void UpdateAdjustments ()
 		{
-			int lastVisibleLine = Document.LogicalToVisualLine (Document.LineCount);
+			int lastVisibleLine = textEditorData.LogicalToVisualLine (Document.LineCount);
 			if (oldRequest != lastVisibleLine) {
 				SetAdjustments (this.Allocation);
 				oldRequest = lastVisibleLine;
@@ -1526,7 +1531,7 @@ namespace Mono.TextEditor
 			}
 		}
 		
-		public Mono.TextEditor.Highlighting.Style ColorStyle {
+		public Mono.TextEditor.Highlighting.ColorSheme ColorStyle {
 			get {
 				return this.textEditorData.ColorStyle;
 			}
@@ -1658,6 +1663,11 @@ namespace Mono.TextEditor
 		public void SetSelection (DocumentLocation anchor, DocumentLocation lead)
 		{
 			this.textEditorData.SetSelection (anchor, lead);
+		}
+			
+		public void SetSelection (int anchorLine, int anchorColumn, int leadLine, int leadColumn)
+		{
+			this.textEditorData.SetSelection (anchorLine, anchorColumn, leadLine, leadColumn);
 		}
 		
 		public void ExtendSelectionTo (DocumentLocation location)
@@ -1923,7 +1933,7 @@ namespace Mono.TextEditor
 				                                                    System.Math.Min (editor.TextViewMargin.charWidth / 2, width), 
 				                                                    width,
 				                                                    editor.LineHeight + 2 * extend * editor.Options.Zoom);
-				Cairo.Color color = Mono.TextEditor.Highlighting.Style.ToCairoColor (editor.ColorStyle.Caret.Color);
+				Cairo.Color color = editor.ColorStyle.Default.CairoColor;
 				color.A = 0.8;
 				cr.LineWidth = editor.Options.Zoom;
 				cr.Color = color;
@@ -1987,7 +1997,7 @@ namespace Mono.TextEditor
 				                                                    System.Math.Min (editor.TextViewMargin.charWidth / 2, width), 
 				                                                    width,
 				                                                    (int)(region.Height + 2 * animationPosition * editor.Options.Zoom));
-				Cairo.Color color = Mono.TextEditor.Highlighting.Style.ToCairoColor (editor.ColorStyle.Caret.Color);
+				Cairo.Color color = editor.ColorStyle.Default.CairoColor;
 				color.A = 0.8;
 				cr.LineWidth = editor.Options.Zoom;
 				cr.Color = color;
@@ -2008,7 +2018,7 @@ namespace Mono.TextEditor
 			if (startPt.Y != endPt.Y || startPt.X < 0 || startPt.Y < 0 || width < 0)
 				return Gdk.Rectangle.Zero;
 			
-			return new Gdk.Rectangle (startPt.X, startPt.Y, width, (int)this.textViewMargin.LineHeight);
+			return new Gdk.Rectangle (startPt.X, startPt.Y, width, (int)this.LineHeight);
 		}
 		
 		/// <summary>
@@ -2636,15 +2646,18 @@ namespace Mono.TextEditor
 
 		void UpdateLinesOnTextMarkerHeightChange (object sender, LineEventArgs e)
 		{
+			// TODO: Optimize
+			textEditorData.heightTree.Rebuild ();
+			
 			if (!e.Line.Markers.Any (m => m is IExtendingTextMarker))
 				return;
 			double currentHeight = GetLineHeight (e.Line);
 			double h;
 			if (!lineHeights.TryGetValue (e.Line.Offset, out h))
-				h = TextViewMargin.LineHeight;
+				h = LineHeight;
 			if (h != currentHeight)
 				textEditorData.Document.CommitLineToEndUpdate (textEditorData.Document.OffsetToLineNumber (e.Line.Offset));
-			lineHeights[e.Line.Offset] = currentHeight;
+			lineHeights [e.Line.Offset] = currentHeight;
 		}
 
 		class SetCaret 

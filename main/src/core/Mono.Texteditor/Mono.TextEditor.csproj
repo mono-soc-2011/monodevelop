@@ -54,8 +54,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Core">
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="Mono.Cairo" />
   </ItemGroup>
   <ItemGroup>
@@ -88,7 +87,6 @@
     <Compile Include="Mono.TextEditor.Highlighting\ChunkStyle.cs" />
     <Compile Include="Mono.TextEditor.Highlighting\Match.cs" />
     <Compile Include="Mono.TextEditor.Highlighting\Span.cs" />
-    <Compile Include="Mono.TextEditor.Highlighting\Style.cs" />
     <Compile Include="Mono.TextEditor.Highlighting\SyntaxMode.cs" />
     <Compile Include="Mono.TextEditor.Highlighting\SyntaxModeService.cs" />
     <Compile Include="Mono.TextEditor.Highlighting\XmlReadHelper.cs" />
@@ -181,6 +179,8 @@
     <Compile Include="Mono.TextEditor\TextMarkerEvent.cs" />
     <Compile Include="Mono.TextEditor\SegmentTree.cs" />
     <Compile Include="Mono.TextEditor.Utils\RedBlackTree.cs" />
+    <Compile Include="Mono.TextEditor\HeightTree.cs" />
+    <Compile Include="Mono.TextEditor.Highlighting\ColorSheme.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />
@@ -272,6 +272,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SyntaxModes\JaySyntaxMode.xml">
       <LogicalName>JaySyntaxMode.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Styles\DefaultStyle.xml">
+      <LogicalName>DefaultStyle.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Styles\GeditStyle.xml">
+      <LogicalName>GeditStyle.xml</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

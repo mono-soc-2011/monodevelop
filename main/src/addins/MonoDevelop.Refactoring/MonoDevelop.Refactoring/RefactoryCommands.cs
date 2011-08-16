@@ -54,7 +54,7 @@ namespace MonoDevelop.Refactoring
 	public enum RefactoryCommands
 	{
 		CurrentRefactoryOperations,
-		GotoDeclaration,
+		GotoDeclaration, // in 'referenced' in IdeViMode.cs as string
 		FindReferences,
 		FindDerivedClasses,
 		DeclareLocal,
@@ -65,7 +65,8 @@ namespace MonoDevelop.Refactoring
 		CreateMethod,
 		IntroduceConstant,
 		IntegrateTemporaryVariable,
-		ImportSymbol
+		ImportSymbol,
+		QuickFix
 	}
 	
 	public class CurrentRefactoryOperationsHandler: CommandHandler
