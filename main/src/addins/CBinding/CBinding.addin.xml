@@ -17,8 +17,17 @@
 		<Addin id = "DesignerSupport" version = "2.6" />
 		<Addin id = "Refactoring" version = "2.6" />
 	</Dependencies>
-	
-	<Extension path = "/MonoDevelop/Core/StockIcons">
+
+  <Extension path = "/MonoDevelop/ProjectModel/MSBuildItemTypes">
+    <DotNetProject
+			language="C++"
+			extension="vcxproj"
+			guid="{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}"
+			import="$(MSBuildBinPath)\Microsoft.Cpp.targets"
+			/>
+  </Extension>
+
+  <Extension path = "/MonoDevelop/Core/StockIcons">
 		<StockIcon stockid = "md-union" resource = "Icons.16x16.Union"/>
 		<StockIcon stockid = "md-protected-union" resource = "Icons.16x16.ProtectedUnion"/>
 		<StockIcon stockid = "md-private-union" resource = "Icons.16x16.PrivateUnion"/>
@@ -48,7 +57,15 @@
 			insertbefore = "AllFiles"
 			_label = "Objective C++ Files"
 			extensions = "*.mm,*.M,*.h"/>
-	</Extension>
+    <FileFilter id = "Libraries"
+		            insertbefore="AllFiles"
+		            _label = "Libraries"
+		            extensions = "*.lib,*.dll"/>
+    <FileFilter id = "Executables"
+		            insertbefore="AllFiles"
+		            _label = "Executables"
+		            extensions = "*.exe"/>
+  </Extension>
 
 	<Extension path = "/MonoDevelop/Ide/FileTemplates">
 		<FileTemplate id = "EmptyCSourceFile" resource = "EmptyCSourceFile.xft.xml"/>
@@ -111,7 +128,11 @@
 			id = "C"
 		    supportedextensions = ".c,.h"
 		    class = "CBinding.CLanguageBinding"/>
-		<LanguageBinding
+    <LanguageBinding
+			id = "C++"
+			supportedextensions = ".cpp,.cxx,.cc,.h,.hpp,.hh,.hxx"
+		    class = "CBinding.CppLanguageBinding"/>
+    <LanguageBinding
 			id = "CPP"
 			supportedextensions = ".cpp,.cxx,.cc,.h,.hpp,.hh,.hxx"
 		    class = "CBinding.CppLanguageBinding"/>
