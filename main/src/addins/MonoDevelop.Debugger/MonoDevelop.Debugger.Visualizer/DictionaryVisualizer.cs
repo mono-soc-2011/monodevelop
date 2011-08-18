@@ -109,7 +109,7 @@ namespace MonoDevelop.Debugger.Visualizer
             scrolled.VscrollbarPolicy = PolicyType.Automatic;
             scrolled.ShadowType = ShadowType.In;
 
-            // Create a nice label describing the Entry
+            // Create a nice label describing the Key
             Gtk.Label keyLabel = new Gtk.Label("[Key Search]");
             
             // Create a nice label describing the Value
@@ -128,7 +128,7 @@ namespace MonoDevelop.Debugger.Visualizer
 
             filterEntryValues = new Gtk.Entry();
 
-            // Create a nice label describing Search
+            // Create a Search button
             Gtk.Button filterButton = new Gtk.Button("Search");
             filterButton.Clicked += OnfilterButtonClicked;
 

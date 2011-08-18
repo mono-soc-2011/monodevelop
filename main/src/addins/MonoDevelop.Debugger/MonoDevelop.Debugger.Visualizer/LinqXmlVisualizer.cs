@@ -1,5 +1,5 @@
 ﻿// 
-// ExceptionVisualizer.cs
+// LinqXmlVisualizer.cs
 //  
 // Author:
 //       Abdul Rauf <raufbutt@gmail.com>
@@ -28,19 +28,18 @@ using System;
 using Mono.Debugging.Client;
 using Gtk;
 using MonoDevelop.Core;
-using System.Collections.Generic;
 using System.Data;
+using System.Xml;
+using System.IO;
 
 namespace MonoDevelop.Debugger.Visualizer
 {
-    public class ExceptionVisualizer : IValueVisualizer
+    public class LinqXmlVisualizer : IValueVisualizer
     {
-
-        Gtk.TreeView tree;
 
         public bool CanVisualize(ObjectValue val)
         {
-            return val.TypeName == "System.Exception";
+            return val.TypeName == "System.Linq.Enumerable.<CreateSelectIterator>c__Iterator10<System.Xml.Linq.XElement,string>";
         }
 
         public bool CanEdit(ObjectValue val)
@@ -50,15 +49,13 @@ namespace MonoDevelop.Debugger.Visualizer
 
         public Gtk.Widget GetVisualizerWidget(ObjectValue val)
         {
-            string msg, src, strace;
+            string xml;
            
             try
             {
                 RawValue rw = (RawValue)val.GetRawValue();
-  
-                msg = (string) rw.GetMemberValue("Message");
-                src = (string) rw.GetMemberValue("Source");
-                strace= (string) rw.GetMemberValue("StackTrace");
+
+                xml = (string)rw.CallMethod("ToString");
 
             }
             finally
@@ -70,51 +67,16 @@ namespace MonoDevelop.Debugger.Visualizer
             scrolled.VscrollbarPolicy = PolicyType.Automatic;
             scrolled.ShadowType = ShadowType.In;
 
-            // Create our TreeView
-            tree = new Gtk.TreeView();
-            tree.BorderWidth = 1;
 
             // Create a box to hold the Entry and Tree
             VBox box = new VBox(false, 1);
+            TextView textView = new TextView();
+            textView.Buffer.Text = xml;
 
-            // Add tree widget to the box
+            textView.WrapMode = WrapMode.None;
 
-            scrolled.Add(tree);
-
-            //Create a column for the Exception Type
-            Gtk.TreeViewColumn typeColumn = new Gtk.TreeViewColumn();
-            typeColumn.Title = "Exception";
-            typeColumn.Alignment = 0.5f;
-            typeColumn.Expand = true;
-
-            // Create the text cell that will display the Exception
-            Gtk.CellRendererText typeCell = new Gtk.CellRendererText();
-
-            // Add the cell to the column
-            typeColumn.PackStart(typeCell, true);
-
-            // Add the columns to the TreeView
-            tree.AppendColumn(typeColumn);
-
-            // Tell the Cell Renderers which items in the model to display
-            typeColumn.AddAttribute(typeCell, "text", 0);
-
-            // Create a data model
-            Gtk.ListStore dicStore = new Gtk.ListStore(typeof(string), typeof(string));
-
-            // Add data to the store
-            Gtk.TreeIter iter = dicStore.AppendValues("Message");
-            dicStore.AppendValues(iter, msg);
-
-            iter = dicStore.AppendValues("Source");
-            dicStore.AppendValues(iter, src);
-
-            iter = dicStore.AppendValues("Stack Trace");
-            dicStore.AppendValues(iter, strace);
-
-            // Assign the filter as our tree's model
-            tree.Model = dicStore;
-   
+            scrolled.Add(textView);
+           
             scrolled.ShowAll();
             return scrolled;
         }
@@ -129,7 +91,7 @@ namespace MonoDevelop.Debugger.Visualizer
         {
             get
             {
-                return GettextCatalog.GetString("Exception");
+                return GettextCatalog.GetString("IEnumerable");
             }
         }
     }

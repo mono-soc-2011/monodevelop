@@ -44,8 +44,8 @@
 	</Extension>
 	
 	<Extension path="/MonoDevelop/Debugging/ValueVisualizers">
-		<Type class="MonoDevelop.Debugger.Visualizer.TextVisualizer" />
-		<Type class="MonoDevelop.Debugger.Visualizer.PixbufVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.TextVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.PixbufVisualizer" />
     <Type class="MonoDevelop.Debugger.Visualizer.ImageVisualizer" />
     <Type class="MonoDevelop.Debugger.Visualizer.GdkColorVisualizer" />
     <Type class="MonoDevelop.Debugger.Visualizer.ColorVisualizer" />
@@ -53,6 +53,12 @@
     <Type class="MonoDevelop.Debugger.Visualizer.ListVisualizer" />
     <Type class="MonoDevelop.Debugger.Visualizer.ListIntVisualizer" />
     <Type class="MonoDevelop.Debugger.Visualizer.ExceptionVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.XmlDocumentVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.XElementVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.LinqXmlVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.DataTableVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.DataRowVisualizer" />
+    <Type class="MonoDevelop.Debugger.Visualizer.ArrayListVisualizer" />
   </Extension>
 	
 	<Extension path = "/MonoDevelop/Ide/StartupHandlers">
