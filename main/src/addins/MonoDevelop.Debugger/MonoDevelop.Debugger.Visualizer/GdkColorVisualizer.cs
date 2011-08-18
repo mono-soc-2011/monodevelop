@@ -62,8 +62,6 @@ namespace MonoDevelop.Debugger.Visualizer
                 UInt16 blue = (UInt16)rw.GetMemberValue("Blue");
                 colour = new Gdk.Color((byte)red, (byte)green, (byte)blue);
 
-                //string specs = val.Value;
-                //bool result = Gdk.Color.Parse(specs, ref colour);
             }
             finally
             {

@@ -63,6 +63,7 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\MonoDevelop.Core\MonoDevelop.Core.csproj">
@@ -90,12 +91,17 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ArrayListVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ColorVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\DataRowVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\DataTableVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\DictionaryVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ExceptionVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\GdkColorVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ImageVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\LinqXmlVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ListIntVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger.Visualizer\ListVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\XElementVisualizer.cs" />
+    <Compile Include="MonoDevelop.Debugger.Visualizer\XmlDocumentVisualizer.cs" />
     <Compile Include="MonoDevelop.Debugger\StackTracePad.cs" />
     <Compile Include="MonoDevelop.Debugger\ObjectValueTreeView.cs" />
     <Compile Include="MonoDevelop.Debugger\WatchPad.cs" />

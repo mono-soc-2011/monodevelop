@@ -78,7 +78,6 @@ namespace MonoDevelop.Debugger.Visualizer
             sc.HscrollbarPolicy = Gtk.PolicyType.Automatic;
             sc.VscrollbarPolicy = Gtk.PolicyType.Automatic;
             Gtk.Image image = new Gtk.Image(pixbuf);
-            //Gtk.Image image = new Gtk.Image(bmp.GetHbitmap());
             sc.AddWithViewport(image);
             vbox.PackStart(sc, true, true, 0);
 
