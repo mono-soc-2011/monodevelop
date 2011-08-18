@@ -78,7 +78,7 @@ namespace MonoDevelop.Debugger.Visualizer
             // Create an Entry used to filter the tree
             filterEntryValues = new Gtk.Entry();
 
-            // Create a nice label describing the Entry
+            // Create a Search button
             Gtk.Button filterButton = new Gtk.Button("Search");
             filterButton.Clicked += OnfilterButtonClicked;
 
@@ -103,13 +103,13 @@ namespace MonoDevelop.Debugger.Visualizer
 
             #region "Tree Build UI code"
 
-            // Create a column for the List Values
+            // Create a column for the Array Items
             Gtk.TreeViewColumn numColumn = new Gtk.TreeViewColumn();
             numColumn.Title = "Array Item";
             numColumn.Alignment = 0.5f;
             numColumn.Expand = false;
 
-            // Create a column for the List Values
+            // Create a column for the Array Values
             Gtk.TreeViewColumn valueColumn = new Gtk.TreeViewColumn();
             valueColumn.Title = "Values";
             valueColumn.Alignment = 0.5f;

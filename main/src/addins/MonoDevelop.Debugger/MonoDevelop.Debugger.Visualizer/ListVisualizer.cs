@@ -82,7 +82,7 @@ namespace MonoDevelop.Debugger.Visualizer
             //filterEntryValues.Backspace += OnFilterEntryValueBackspace;
             //filterEntryValues.Changed += OnFilterEntryValueChanged;
 
-            // Create a nice label describing the Entry
+            // Create a Search Button
             Gtk.Button filterButton = new Gtk.Button("Search");
             filterButton.Clicked += OnfilterButtonClicked;
 
@@ -106,7 +106,7 @@ namespace MonoDevelop.Debugger.Visualizer
 
             #region "Tree Build UI code"
 
-            // Create a column for the List Values
+            // Create a column for the List index
             Gtk.TreeViewColumn numColumn = new Gtk.TreeViewColumn();
             numColumn.Title = "List Index";
             numColumn.Alignment = 0.5f;
@@ -118,7 +118,7 @@ namespace MonoDevelop.Debugger.Visualizer
             valueColumn.Alignment = 0.5f;
             valueColumn.Expand = true;
 
-            // Create a cell that will display numbers
+            // Create a cell that will display index
             Gtk.CellRendererText numCell = new Gtk.CellRendererText();
             numCell.Xalign = 0.5f;
             numColumn.PackStart(numCell, false);
