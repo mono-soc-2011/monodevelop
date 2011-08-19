@@ -43,7 +43,7 @@ namespace MonoDevelop.Projects
 	/// <summary>
 	/// This class represent a build configuration information in an Project object.
 	/// </summary>
-	[DataItem(FallbackType = typeof(UnknownProjectBuildConfiguration))]
+	[DataItem(Name = "ProjectConfiguration", FallbackType = typeof(UnknownProjectBuildConfiguration))]
 	public class ProjectBuildConfiguration : ProjectItem, ICloneable
 	{
 		public ProjectBuildConfiguration()
