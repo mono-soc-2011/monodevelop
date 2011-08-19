@@ -543,10 +543,18 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 					pref.Condition = buildItem.Condition;
 					return pref;
 				}
-				else if (dt == null && !string.IsNullOrEmpty (buildItem.Include)) {
+				else if (buildItem.Name == "ProjectConfiguration") {
+					ProjectBuildConfiguration bconf = new ProjectBuildConfiguration();
+					bconf.Include = buildItem.Include;
+					bconf.Configuration = buildItem.GetMetadata("Configuration");
+					bconf.Platform = buildItem.GetMetadata("Platform");
+					bconf.OwnerProject = project;
+					return bconf;
+				}
+				else if (dt == null && !string.IsNullOrEmpty(buildItem.Include)) {
 					// Unknown item. Must be a file.
-					if (!UnsupportedItems.Contains (buildItem.Name) && IsValidFile (buildItem.Include))
-						return ReadProjectFile (ser, project, buildItem, typeof(ProjectFile));
+					if (!UnsupportedItems.Contains(buildItem.Name) && IsValidFile(buildItem.Include))
+						return ReadProjectFile(ser, project, buildItem, typeof(ProjectFile));
 				}
 			}
 			
