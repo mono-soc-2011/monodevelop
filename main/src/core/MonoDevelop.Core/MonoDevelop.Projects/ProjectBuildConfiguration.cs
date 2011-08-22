@@ -61,18 +61,21 @@ namespace MonoDevelop.Projects
 			set;
 		}
 
+		//[ItemProperty]
 		public string Include
 		{
 			get;
 			set;
 		}
 
+		//[ItemProperty]
 		public string Configuration
 		{
 			get;
 			set;
 		}
 
+		//[ItemProperty]
 		public string Platform
 		{
 			get;

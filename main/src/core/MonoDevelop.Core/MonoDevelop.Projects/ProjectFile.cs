@@ -43,7 +43,7 @@ namespace MonoDevelop.Projects
 	public enum Subtype
 	{
 		Code,
-		Directory
+		Directory,
 	}
 
 	/// <summary>

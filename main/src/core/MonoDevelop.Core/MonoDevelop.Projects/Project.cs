@@ -68,6 +68,7 @@ namespace MonoDevelop.Projects
 			FileService.FileChanged += OnFileChanged;
 			files = new ProjectFileCollection ();
 			Items.Bind (files);
+			Filters = new ProjectItemCollection<ProjectFilterItem>();
 			DependencyResolutionEnabled = true;
 		}
 		
@@ -105,7 +106,15 @@ namespace MonoDevelop.Projects
 			get { return files; }
 		}
 		private ProjectFileCollection files;
-		
+
+		/// <summary>
+		/// Filters of the project
+		/// </summary>
+		public ProjectItemCollection<ProjectFilterItem> Filters
+		{
+			get;
+			set;
+		}
 		
 		[ItemProperty("newfilesearch", DefaultValue = NewFileSearch.None)]
 		protected NewFileSearch newFileSearch = NewFileSearch.None;
