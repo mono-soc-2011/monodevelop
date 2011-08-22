@@ -39,10 +39,10 @@ using MonoDevelop.Projects.CodeGeneration;
 
 namespace CBinding
 {
-	public class CppLanguageBinding : ILanguageBinding
+	public class CppLanguageBinding : IDotNetLanguageBinding
 	{
 		public string Language {
-			get { return "CPP"; }
+			get { return "C++"; }
 		}
 		
 		public string SingleLineCommentTag { get { return "//"; } }
@@ -65,6 +65,44 @@ namespace CBinding
 		public string GetFileName (string baseName)
 		{
 			return baseName + ".cpp";
+		}
+
+		public string ProjectStockIcon
+		{
+			get { return "md-cpp-file"; }
+		}
+
+		public ConfigurationParameters CreateCompilationParameters(System.Xml.XmlElement projectOptions)
+		{
+			LoggingService.LogDebug("NotImplemented");
+			return null;
+		}
+
+		public ProjectParameters CreateProjectParameters(System.Xml.XmlElement projectOptions)
+		{
+			return new CProjectParameters();
+		}
+
+		public BuildResult Compile(ProjectItemCollection items, DotNetProjectConfiguration configuration, ConfigurationSelector configSelector, IProgressMonitor monitor)
+		{
+			LoggingService.LogDebug("NotImplemented");
+			return null;
+		}
+
+		public ClrVersion[] GetSupportedClrVersions()
+		{
+			return new ClrVersion[] { 
+				ClrVersion.Net_1_1, 
+				ClrVersion.Net_2_0, 
+				ClrVersion.Clr_2_1,
+				ClrVersion.Net_4_0
+			};
+		}
+
+		public System.CodeDom.Compiler.CodeDomProvider GetCodeDomProvider()
+		{
+			LoggingService.LogDebug("NotImplemented");
+			return null;
 		}
 	}
 }

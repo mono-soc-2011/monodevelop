@@ -19,12 +19,12 @@
 	</Dependencies>
 
   <Extension path = "/MonoDevelop/ProjectModel/MSBuildItemTypes">
-    <DotNetProject
-			language="C++"
-			extension="vcxproj"
-			guid="{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}"
-			import="$(MSBuildBinPath)\Microsoft.Cpp.targets"
-			/>
+    <SolutionItem language="C++"
+                  type="CBinding.CppProject"
+                  extension="vcxproj"
+                  guid="{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}"
+                  import="$(MSBuildBinPath)\Microsoft.Cpp.targets"
+    />
   </Extension>
 
   <Extension path = "/MonoDevelop/Core/StockIcons">
@@ -121,6 +121,7 @@
 	
 	<Extension path = "/MonoDevelop/ProjectModel/ProjectBindings">
 		<ProjectBinding id = "CProject" class = "CBinding.CProjectBinding"/>
+    <ProjectBinding id = "CppProject" class = "CBinding.CppProjectBinding"/>
 	</Extension>
 	
 	<Extension path = "/MonoDevelop/ProjectModel/LanguageBindings">
@@ -182,6 +183,7 @@
 	</ExtensionPoint>
 	
 	<Extension path = "/MonoDevelop/Ide/Pads/ProjectPad">
+    <NodeBuilder id = "CBinding.ProjectPad.CppProjectNodeExtension" class = "CBinding.ProjectPad.CppProjectNodeExtension"/>
 		<NodeBuilder id = "CBinding.ProjectPad.ProjectReferencesExtension" class = "CBinding.ProjectPad.ProjectReferencesExtension"/>
 		<NodeBuilder id = "CBinding.ProjectPad.ProjectNodeExtension" class = "CBinding.ProjectPad.ProjectNodeExtension"/>
 		<NodeBuilder id = "CBinding.ProjectPad.ProjectPackagesFolderNodeBuilder" class = "CBinding.ProjectPad.ProjectPackagesFolderNodeBuilder"/>

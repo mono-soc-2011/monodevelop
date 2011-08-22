@@ -34,8 +34,9 @@ using MonoDevelop.Core.Serialization;
 using MonoDevelop.Core.Assemblies;
 using MonoDevelop.Core.StringParsing;
 using System.Collections.Generic;
+using MonoDevelop.Projects;
 
-namespace MonoDevelop.Projects
+namespace CBinding
 {
 	#region General Properties Enums
 
