@@ -236,6 +236,20 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 			MSBuildProject p = new MSBuildProject ();
 			fileContent = File.ReadAllText (fileName);
 			p.LoadXml (fileContent);
+
+			timer.Trace("Read project file filters");
+
+			// Check if the filter project file exists.
+			string filterName = fileName + ".filters";
+			
+			if(File.Exists(filterName)) {
+
+				string filterContent = File.ReadAllText(filterName);
+
+				MSBuildProjectFilter f = new MSBuildProjectFilter();
+				f.LoadXml(filterContent);
+				p.projectFilter = f;
+			}
 			
 			timer.Trace ("Read project guids");
 			
@@ -337,23 +351,83 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 			MSBuildPropertySet globalGroup = msproject.GetGlobalPropertyGroup ();
 			
 			Item.SetItemHandler (this);
-			
+
+			Project project = Item as Project;
 			DotNetProject dotNetProject = Item as DotNetProject;
-			
+
+			// Read all filter items
+
+			if (msproject.projectFilter != null)
+			{
+				timer.Trace("Read filter items");
+
+				foreach (MSBuildItemGroup itemGroup in msproject.projectFilter.ItemGroups)
+				{
+					foreach (MSBuildItem buildItem in itemGroup.Items)
+					{
+						// The MSBuild filters file is organized in item groups. First an item group
+						// with the name and UID of the filters is found, and then different groups
+						// with the files contained in the filters.
+
+						if (buildItem.Name == "Filter")
+						{
+							ProjectFilterItem item = ReadItem(ser, buildItem) as ProjectFilterItem;
+							msproject.projectFilter.AddFilter(item);
+						}
+						else
+						{
+							if (buildItem.Element.ChildNodes.Count == 0) continue;
+							XmlElement elem = buildItem.Element.ChildNodes[0] as XmlElement;
+							if(elem.Name != "Filter") continue;
+
+							// We store the filename so later when the files are read from the main project groups,
+							// we can find if the file is on any filter group.
+
+							string fileName = MSBuildProjectService.FromMSBuildPath(project.ItemDirectory, buildItem.Include);
+							string filterName = elem.InnerText;
+
+							ProjectFilterItem filterItem = msproject.projectFilter.GetFilterByName(filterName);
+							if (filterName == null) continue;
+
+							msproject.projectFilter.fileItems[fileName] = filterItem;
+						}
+					}
+				}
+			}
+
 			// Read all items
 			
 			timer.Trace ("Read project items");
 			
 			foreach (MSBuildItem buildItem in msproject.GetAllItems ()) {
 				ProjectItem it = ReadItem (ser, buildItem);
-				if (it != null) {
-					EntityItem.Items.Add (it);
-					int i = EntityItem.Items.IndexOf (it);
-					if (i != -1 && EntityItem.Items [i] != it && EntityItem.Items [i].Condition == it.Condition)
-						EntityItem.Items.RemoveAt (i); // Remove duplicates
+
+				ProjectFile file = it as ProjectFile;
+				ProjectFilterItem filterItem = null;
+
+				// If we read a file, we need to check if it is in any filter group.
+				if (file != null && msproject.projectFilter.fileItems.ContainsKey(file.Name))
+				{
+					filterItem = msproject.projectFilter.fileItems[file.Name];
+					if (filterItem != null)
+						filterItem.items.Add(file);
+				}
+
+				if (it != null && filterItem == null)
+				{
+					EntityItem.Items.Add(it);
+					int i = EntityItem.Items.IndexOf(it);
+					if (i != -1 && EntityItem.Items[i] != it && EntityItem.Items[i].Condition == it.Condition)
+						EntityItem.Items.RemoveAt(i); // Remove duplicates
 				}
 			}
-			
+
+			// Add the filters to the project.
+			foreach (ProjectFilterItem filter in msproject.projectFilter.filterItems.Values)
+			{
+				project.Filters.Add(filter);
+			}
+
 			timer.Trace ("Read configurations");
 			
 			TargetFrameworkMoniker targetFx = null;
@@ -447,7 +521,7 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 				
 				dotNetProject.TargetFramework = Runtime.SystemAssemblyService.GetTargetFramework (targetFx);
 			}
-			
+
 			Item.NeedsReload = false;
 		}
 
@@ -499,26 +573,52 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 					string path = MSBuildProjectService.FromMSBuildPath (project.ItemDirectory, buildItem.Include);
 					return new ProjectFile () { Name = Path.GetDirectoryName (path), Subtype = Subtype.Directory };
 				}
-				else if (buildItem.Name == "Reference" && dotNetProject != null) {
-					ProjectReference pref;
-					if (buildItem.HasMetadata ("HintPath")) {
-						string hintPath = buildItem.GetMetadata ("HintPath");
-						string path;
-						if (!MSBuildProjectService.FromMSBuildPath (dotNetProject.ItemDirectory, hintPath, out path)) {
-							pref = new ProjectReference (ReferenceType.Assembly, path);
-							pref.SetInvalid (GettextCatalog.GetString ("Invalid file path"));
-							pref.ExtendedProperties ["_OriginalMSBuildReferenceInclude"] = buildItem.Include;
-							pref.ExtendedProperties ["_OriginalMSBuildReferenceHintPath"] = hintPath;
-						} else if (File.Exists (path)) {
-							pref = new ProjectReference (ReferenceType.Assembly, path);
-							if (MSBuildProjectService.IsAbsoluteMSBuildPath (hintPath))
-								pref.ExtendedProperties ["_OriginalMSBuildReferenceIsAbsolute"] = true;
-						} else {
-							pref = new ProjectReference (ReferenceType.Gac, buildItem.Include);
-							pref.ExtendedProperties ["_OriginalMSBuildReferenceHintPath"] = hintPath;
+				else if (buildItem.Name == "Filter")
+				{
+					string name = buildItem.Include;
+					ProjectFilterItem item = new ProjectFilterItem(name);
+					item.Name = name;
+
+					foreach (XmlElement elem in buildItem.Element.ChildNodes)
+					{
+						if (elem.Name == "UniqueIdentifier")
+						{
+							item.UniqueIdentifier = elem.Value;
+							break;
 						}
-						pref.LocalCopy = !buildItem.GetMetadataIsFalse ("Private");
-					} else {
+					}
+
+					return item;
+				}
+				else if (buildItem.Name == "Reference" && dotNetProject != null)
+				{
+					ProjectReference pref;
+					if (buildItem.HasMetadata("HintPath"))
+					{
+						string hintPath = buildItem.GetMetadata("HintPath");
+						string path;
+						if (!MSBuildProjectService.FromMSBuildPath(dotNetProject.ItemDirectory, hintPath, out path))
+						{
+							pref = new ProjectReference(ReferenceType.Assembly, path);
+							pref.SetInvalid(GettextCatalog.GetString("Invalid file path"));
+							pref.ExtendedProperties["_OriginalMSBuildReferenceInclude"] = buildItem.Include;
+							pref.ExtendedProperties["_OriginalMSBuildReferenceHintPath"] = hintPath;
+						}
+						else if (File.Exists(path))
+						{
+							pref = new ProjectReference(ReferenceType.Assembly, path);
+							if (MSBuildProjectService.IsAbsoluteMSBuildPath(hintPath))
+								pref.ExtendedProperties["_OriginalMSBuildReferenceIsAbsolute"] = true;
+						}
+						else
+						{
+							pref = new ProjectReference(ReferenceType.Gac, buildItem.Include);
+							pref.ExtendedProperties["_OriginalMSBuildReferenceHintPath"] = hintPath;
+						}
+						pref.LocalCopy = !buildItem.GetMetadataIsFalse("Private");
+					}
+					else
+					{
 						string asm = buildItem.Include;
 						// This is a workaround for a VS bug. Looks like it is writing this assembly incorrectly
 						if (asm == "System.configuration")
@@ -527,23 +627,25 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 							asm = "System.Xml";
 						else if (asm == "system")
 							asm = "System";
-						pref = new ProjectReference (ReferenceType.Gac, asm);
+						pref = new ProjectReference(ReferenceType.Gac, asm);
 					}
 					pref.Condition = buildItem.Condition;
-					pref.SpecificVersion = !buildItem.GetMetadataIsFalse ("SpecificVersion");
-					ReadBuildItemMetadata (ser, buildItem, pref, typeof(ProjectReference));
+					pref.SpecificVersion = !buildItem.GetMetadataIsFalse("SpecificVersion");
+					ReadBuildItemMetadata(ser, buildItem, pref, typeof(ProjectReference));
 					return pref;
 				}
-				else if (buildItem.Name == "ProjectReference" && dotNetProject != null) {
+				else if (buildItem.Name == "ProjectReference" && dotNetProject != null)
+				{
 					// Get the project name from the path, since the Name attribute may other stuff other than the name
-					string path = MSBuildProjectService.FromMSBuildPath (project.ItemDirectory, buildItem.Include);
-					string name = Path.GetFileNameWithoutExtension (path);
-					ProjectReference pref = new ProjectReference (ReferenceType.Project, name);
-					pref.LocalCopy = !buildItem.GetMetadataIsFalse ("Private");
+					string path = MSBuildProjectService.FromMSBuildPath(project.ItemDirectory, buildItem.Include);
+					string name = Path.GetFileNameWithoutExtension(path);
+					ProjectReference pref = new ProjectReference(ReferenceType.Project, name);
+					pref.LocalCopy = !buildItem.GetMetadataIsFalse("Private");
 					pref.Condition = buildItem.Condition;
 					return pref;
 				}
-				else if (buildItem.Name == "ProjectConfiguration") {
+				else if (buildItem.Name == "ProjectConfiguration")
+				{
 					ProjectBuildConfiguration bconf = new ProjectBuildConfiguration();
 					bconf.Include = buildItem.Include;
 					bconf.Configuration = buildItem.GetMetadata("Configuration");
@@ -551,7 +653,8 @@ namespace MonoDevelop.Projects.Formats.MSBuild
 					bconf.OwnerProject = project;
 					return bconf;
 				}
-				else if (dt == null && !string.IsNullOrEmpty(buildItem.Include)) {
+				else if (dt == null && !string.IsNullOrEmpty(buildItem.Include))
+				{
 					// Unknown item. Must be a file.
 					if (!UnsupportedItems.Contains(buildItem.Name) && IsValidFile(buildItem.Include))
 						return ReadProjectFile(ser, project, buildItem, typeof(ProjectFile));
